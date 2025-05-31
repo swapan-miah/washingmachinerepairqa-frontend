@@ -1,8 +1,7 @@
+import axios from "axios";
 import EditHeading from "@/components/Dashboard/EditHeading";
 
 export default async function page({ params }) {
-	const { id } = await params;
-	const result = await fetch(`${process.env.BASE_URL}/section-heading/${id}`);
-	const data = await result.json();
+	const { data } = await axios.get(`${process.env.BASE_URL}/section-heading/${params.id}`);
 	return <EditHeading data={data} />;
 }
