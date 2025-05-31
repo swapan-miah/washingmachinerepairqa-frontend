@@ -61,7 +61,7 @@ export default async function Home() {
 				<WhyChooseUs />
 				<WashingMachineRepair />
 				<CustomerTestimonials />
-				<Blogs showAll={true} />
+				<Blogs showAll={false} />
 				<Contact />
 				<Map />
 			</main>
