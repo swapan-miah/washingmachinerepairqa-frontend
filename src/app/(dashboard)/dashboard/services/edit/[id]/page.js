@@ -1,8 +1,8 @@
+import axios from "axios";
 import EditService from "@/components/Dashboard/EditService";
 
 export default async function page({ params }) {
-	const { id } = await params;
-	const result = await fetch(`${process.env.BASE_URL}/our-service/${id}`);
-	const data = await result.json();
+	const { data } = await axios.get(`${process.env.BASE_URL}/our-service/${params.id}`);
 	return <EditService data={data} />;
 }
+
