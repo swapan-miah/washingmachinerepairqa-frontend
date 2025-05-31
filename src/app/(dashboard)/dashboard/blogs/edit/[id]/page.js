@@ -1,10 +1,7 @@
+import axios from "axios";
 import EditBlog from "@/components/Dashboard/EditBlog";
 
 export default async function page({ params }) {
-	const { id } = await params;
-	const result = await fetch(`${process.env.BASE_URL}/blogs/${id}`, {
-		cache: "no-store",
-	});
-	const data = await result.json();
+	const { data } = await axios.get(`${process.env.BASE_URL}/blogs/${params.id}`);
 	return <EditBlog data={data} />;
 }
