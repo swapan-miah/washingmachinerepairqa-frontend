@@ -1,0 +1,25 @@
+@keyframes border-x {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes border-y {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-border-x {
+  animation: border-x 2s linear infinite;
+}
+
+.animate-border-y {
+  animation: border-y 2s linear infinite;
+}

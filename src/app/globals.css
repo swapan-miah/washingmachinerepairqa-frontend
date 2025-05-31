@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--background: #ffffff;
+}
+
+body {
+	background: var(--background);
+	/* font-family: Arial, Helvetica, sans-serif; */
+}
+
+/* Custom CSS */
+@layer utilities {
+	.hero-banner {
+		@apply relative h-screen bg-cover bg-center text-white;
+		background-image: url("/images/WhyChooseUs.png");
+	}
+
+	@media (max-width: 768px) {
+		.hero-banner {
+			@apply relative h-screen bg-cover bg-center text-white;
+			background-image: url("/images/red-washing-m.jpeg");
+		}
+	}
+}
+
+.container {
+	width: 96%;
+}
+
+/* Some Styles */
+
+.page-title{
+	overflow : hidden;
+	color: black;
+}
+
+.page-title span{
+	color: black;
+}
+
+.page-title span::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 105%;
+	width: 100%;
+	max-width: 200px;
+	height: 1.5px;
+	background-color: #0d9488;
+}
+
+.page-title span::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 105%;
+	width: 100%;
+	max-width: 200px;
+	height: 1.5px;
+	background-color: #0d9488;
+}
+
+.Or span::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 105%;
+	width: 100%;
+	height: 1.5px;
+	background-color: #f2f2f2;
+}
+
+.Or span::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 105%;
+	width: 100%;
+	height: 1.5px;
+	background-color: #f2f2f2;
+}
+
+.choose-us span::after {
+	content: "";
+	position: absolute;
+	top: 120%;
+	transform: translateY(-50%);
+	left: 0%;
+	width: 100%;
+	height: 1px;
+	background-color: #000;
+}
+
+.choose-us span::before {
+	content: "";
+	position: absolute;
+	top: 135%;
+	transform: translateY(-50%);
+	left: 0%;
+	width: 80%;
+	height: 1px;
+	background-color: #0d9488;
+}
+
+.custom-shadow {
+	box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+		rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+
+.frontend-icon svg {
+	width: 50px;
+	height: 50px;
+}
+
+.dashboard-icon svg {
+	width: 30px;
+	height: 30px;
+}
+
+
+/* AutoTextSlider */
+.wrapper {
+	margin-inline: auto;
+	height: 80px;
+	mask-image: linear-gradient(
+		to right,
+		rgba(0, 0, 0, 0),
+		rgba(0, 0, 0, 1) 2%,
+		rgba(0, 0, 0, 1) 98%,
+		rgba(0, 0, 0, 0)
+	);
+}
+@keyframes scrollLeft {
+	to {
+		left: -200px;
+	}
+}
+.item {
+	width: 200px;
+	height: 80px;
+	border-radius: 3px;
+	left: 100%;
+	animation-name: scrollLeft;
+	animation-duration: 30s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-delay: -25s;
+}
+
+/* Toolbar option button styling override */
+.jodit-status-bar,
+.jodit-status-bar__item.jodit-status-bar__item--about {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
