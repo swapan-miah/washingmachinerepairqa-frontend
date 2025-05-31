@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import Loading from "@/components/Loading";
 import TextEditor from "@/components/Dashboard/TextEditor";
 import { useRouter } from "next/navigation";
+import { FaPlus, FaMinus } from "react-icons/fa6";
 
 export default function page() {
 	const [image, setImage] = useState(null);
@@ -18,6 +19,22 @@ export default function page() {
 	const [slug, setSlug] = useState("");
 	const [isSlugUsed, setIsSlugUsed] = useState(false);
 	const router = useRouter();
+
+	const [formData, setFormData] = useState({
+		metaTitle: "",
+		metaDescription: "",
+		metaKeywords: "",
+		robotMeta: "",
+	});
+
+	const [schemaItems, setSchemaItems] = useState([
+		{ question: "", answer: "" },
+	]);
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
 
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
@@ -70,11 +87,17 @@ export default function page() {
 		if (image) {
 			uploadedImageUrl = await uploadToCloudinary(image);
 		}
-
+        const schema = schemaItems;
 		const currentDate = new Date().toISOString();
+		const { metaTitle, metaDescription, metaKeywords, robotMeta } = formData;
 
 		try {
 			await axios.post(`${process.env.BASE_URL}/post-blogs`, {
+				metaTitle,
+				metaDescription,
+				metaKeywords,
+				robotMeta,
+				schema,
 				slug: generatedSlug,
 				title,
 				category,
@@ -82,11 +105,18 @@ export default function page() {
 				image: uploadedImageUrl,
 				date: currentDate,
 			});
-			setTitle("");
-			setCategory("");
-			setEditorContent("");
-			setImage(null);
-			setSlug("");
+			 setTitle("");
+      setCategory("");
+      setEditorContent("");
+      setImage(null);
+      setSlug("");
+      setFormData({
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
+        robotMeta: "",
+      });
+      setSchemaItems([{ question: "", answer: "" }]);
 			toast.success("Submitted Successfully!");
 			router.push("/dashboard/blogs");
 		} catch (err) {
@@ -136,6 +166,147 @@ export default function page() {
 							</button>
 						</div>
 					)}
+				</div>
+
+				{[{ name: "metaTitle", label: "Meta Title" }].map(({ name, label }) => (
+					<div key={name} className="flex flex-col gap-1">
+						<label className="font-medium text-sm text-gray-700">
+							{label} <span className="text-red-500">*</span>
+						</label>
+						<input
+							name={name}
+							value={formData[name]}
+							onChange={handleChange}
+							required
+							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
+							placeholder={label}
+						/>
+					</div>
+				))}
+
+				{[
+					{ name: "metaDescription", label: "Meta Description" },
+					{ name: "metaKeywords", label: "Meta Keywords" },
+				].map(({ name, label }) => (
+					<div key={name} className="flex flex-col gap-1">
+						<label className="font-medium text-sm text-gray-700">
+							{label} <span className="text-red-500">*</span>
+						</label>
+						<textarea
+							name={name}
+							rows="4"
+							placeholder={label}
+							value={formData[name]}
+							onChange={handleChange}
+							className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
+							required
+						/>
+					</div>
+				))}
+
+				<div className="flex flex-col gap-2">
+					<label className="font-medium text-sm text-gray-700">
+						Robots Meta <span className="text-red-500">*</span>
+					</label>
+					<div className="flex flex-col sm:flex-row gap-3">
+						{["index", "noindex"].map((option) => (
+							<label
+								key={option}
+								className="flex items-center gap-3 p-3 border border-gray-300 rounded cursor-pointer">
+								<input
+									type="radio"
+									name="robotMeta"
+									value={option}
+									checked={formData.robotMeta === option}
+									onChange={handleChange}
+									className="w-4 h-4 text-red-600 accent-[#0d9488]"
+									required
+								/>
+								<span className="capitalize text-sm">
+									{option === "noindex" ? "No Index" : option}
+								</span>
+							</label>
+						))}
+					</div>
+				</div>
+
+				<div className="flex flex-col gap-4">
+					{schemaItems.map((item, index) => (
+						<div
+							key={index}
+							className="border p-4 rounded flex flex-col gap-3 bg-white">
+							<div className="flex items-center justify-between mb-2">
+								<h2 className="font-medium flex items-center gap-3 text-md">
+									<button className="bg-[#0d9488] h-[32px] w-[60px] rounded grid place-items-center text-white">
+										{String(index + 1).padStart(2, "0")}
+									</button>
+									Schema
+								</h2>
+								<div>
+									{index === schemaItems.length - 1 ? (
+										<button
+											type="button"
+											onClick={() =>
+												setSchemaItems([
+													...schemaItems,
+													{ question: "", answer: "" },
+												])
+											}
+											className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
+											<FaPlus />
+										</button>
+									) : (
+										<button
+											type="button"
+											onClick={() => {
+												const updatedItems = [...schemaItems];
+												updatedItems.splice(index, 1);
+												setSchemaItems(updatedItems);
+											}}
+											className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
+											<FaMinus />
+										</button>
+									)}
+								</div>
+							</div>
+
+							<div className="flex flex-col gap-1">
+								<label className="font-medium text-sm text-gray-700">
+									Question <span className="text-red-500">*</span>
+								</label>
+								<input
+									type="text"
+									placeholder="Question"
+									value={item.question}
+									onChange={(e) => {
+										const updatedItems = [...schemaItems];
+										updatedItems[index].question = e.target.value;
+										setSchemaItems(updatedItems);
+									}}
+									className="border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
+									required
+								/>
+							</div>
+
+							<div className="flex flex-col gap-1 mt-3">
+								<label className="font-medium text-sm text-gray-700">
+									Answer <span className="text-red-500">*</span>
+								</label>
+								<textarea
+									rows="4"
+									placeholder="Answer"
+									value={item.answer}
+									onChange={(e) => {
+										const updatedItems = [...schemaItems];
+										updatedItems[index].answer = e.target.value;
+										setSchemaItems(updatedItems);
+									}}
+									className="resize-none border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
+									required
+								/>
+							</div>
+						</div>
+					))}
 				</div>
 
 				<div className="flex flex-col gap-1">
