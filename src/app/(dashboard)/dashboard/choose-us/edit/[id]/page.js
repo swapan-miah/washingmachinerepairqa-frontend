@@ -1,9 +1,7 @@
+import axios from "axios";
 import EditChooseUs from "@/components/Dashboard/EditChooseUs";
 
 export default async function page() {
-	const result = await fetch(`${process.env.BASE_URL}/why-choose`, {
-		cache: "no-store", // ensure fresh data
-	});
-	const data = await result.json();
+	const { data } = await axios.get(`${process.env.BASE_URL}/why-choose`);
 	return <EditChooseUs data={data} />;
 }
