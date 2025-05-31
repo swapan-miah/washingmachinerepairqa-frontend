@@ -27,7 +27,8 @@ body {
 }
 
 .container {
-	width: 96%;
+	width: 96% !important;
+	max-width: 1440px !important;
 }
 
 /* Some Styles */
