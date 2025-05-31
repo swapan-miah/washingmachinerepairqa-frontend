@@ -5,7 +5,7 @@ import Map from "@/components/Map";
 import ProfessionalServiceSection from "@/components/ProfessionalServiceSection";
 import WhatWeDo from "@/components/WhatWeDo";
 import WhyChooseUs from "@/components/WhyChooseUs";
-import BlogPage from "./blogs/page";
+import Blogs from "@/components/Blogs";
 import WashingMachineRepair from "@/components/WashingMachineRepair";
 import Contact from "@/components/Contact";
 import GoogleTagManager from "@/components/GoogleTagManager";
@@ -61,7 +61,7 @@ export default async function Home() {
 				<WhyChooseUs />
 				<WashingMachineRepair />
 				<CustomerTestimonials />
-				<BlogPage />
+				<Blogs showAll={true} />
 				<Contact />
 				<Map />
 			</main>
