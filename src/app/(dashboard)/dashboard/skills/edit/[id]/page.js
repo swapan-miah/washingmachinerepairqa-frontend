@@ -1,10 +1,7 @@
+import axios from "axios";
 import EditWorks from "@/components/Dashboard/EditWorks";
 
 export default async function page({ params }) {
-	const { id } = await params;
-	const result = await fetch(`${process.env.BASE_URL}/skills/${id}`, {
-		cache: "no-store", // ensure fresh data
-	});
-	const data = await result.json();
+	const { data } = await axios.get(`${process.env.BASE_URL}/skills/${params.id}`);
 	return <EditWorks data={data} />;
 }
