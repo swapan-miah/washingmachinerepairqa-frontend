@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 async function getRobotsTxtUrl() {
-  const res = await fetch("http://localhost:3112/seo-files", {
+  const res = await fetch(`${process.env.BASE_URL}/seo-files`, {
     cache: "no-store",
   });
   const data = await res.json();
