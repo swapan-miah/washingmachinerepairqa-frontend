@@ -3,7 +3,7 @@ import HomeData from "../../../lib/HomeData";
 export async function generateMetadata() {
 	const data = await HomeData();
 	return {
-		title: "Login | " + data?.title,
+		title: "Login || " + data?.title,
 		description: data?.description,
 		keywords: data?.keywords || "",
 		robots: data?.index !== "index" ? "index, follow" : "noindex, nofollow",

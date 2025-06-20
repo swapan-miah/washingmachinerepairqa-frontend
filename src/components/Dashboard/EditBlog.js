@@ -8,38 +8,33 @@ import { toast } from "react-hot-toast";
 import { uploadToCloudinary } from "../../../utils/uploadToCloudinary";
 import Loading from "../Loading";
 import TextEditor from "../Dashboard/TextEditor";
-import SchemaEditor from "./SchemaEditor";
 
 export default function EditBlog({ data }) {
 	const router = useRouter();
-
 	const [image, setImage] = useState(null);
 	const [imageRemoved, setImageRemoved] = useState(false);
 	const [loading, setLoading] = useState(false);
-
 	const [editorContent, setEditorContent] = useState("");
+	const [isSlugUsed, setIsSlugUsed] = useState(false);
+
 	const [formData, setFormData] = useState({
 		metaTitle: "",
 		metaDescription: "",
 		metaKeywords: "",
 		robotMeta: "",
+		schema: "",
 		slug: "",
 		title: "",
 		category: "",
 	});
 
-	const [schemaItems, setSchemaItems] = useState(
-		Array.isArray(data?.schema) ? data.schema : [],
-	);
-
-	const [isSlugUsed, setIsSlugUsed] = useState(false);
-
 	useEffect(() => {
 		setFormData({
-      metaTitle: data?.metaTitle || "",
-      metaDescription: data?.metaDescription || "",
-      metaKeywords: data?.metaKeywords || "",
-      robotMeta: data?.robotMeta || "",
+			metaTitle: data?.metaTitle || "",
+			metaDescription: data?.metaDescription || "",
+			metaKeywords: data?.metaKeywords || "",
+			robotMeta: data?.robotMeta || "",
+			schema: data?.schema || "",
 			slug: data?.slug || "",
 			title: data?.title || "",
 			category: data?.category || "",
@@ -72,6 +67,21 @@ export default function EditBlog({ data }) {
 		e.preventDefault();
 		setLoading(true);
 
+		let cleanSchema = formData.schema.trim();
+		if (cleanSchema.startsWith("<script")) {
+			const matched = cleanSchema.match(/<script[^>]*>([\s\S]*?)<\/script>/);
+			if (matched && matched[1]) {
+				cleanSchema = matched[1].trim();
+			}
+		}
+		try {
+			JSON.parse(cleanSchema);
+		} catch (err) {
+			toast.error("Invalid JSON in Schema field.");
+			setLoading(false);
+			return;
+		}
+
 		try {
 			const res = await axios.get(`${process.env.BASE_URL}/our-blogs`);
 			const allBlogs = res.data;
@@ -95,17 +105,9 @@ export default function EditBlog({ data }) {
 				uploadedImageUrl = "";
 			}
 
-			const schema = schemaItems;
-
 			await axios.put(`${process.env.BASE_URL}/our-blogs/edit/${data._id}`, {
-				metaTitle: formData.metaTitle,
-				metaDescription: formData.metaDescription,
-				metaKeywords: formData.metaKeywords,
-				robotMeta: formData.robotMeta,
-				schema,
-				slug: formData.slug,
-				title: formData.title,
-				category: formData.category,
+				...formData,
+				schema: cleanSchema,
 				description: editorContent,
 				image: uploadedImageUrl,
 			});
@@ -142,23 +144,8 @@ export default function EditBlog({ data }) {
 					)}
 				</div>
 
-				{[{ name: "metaTitle", label: "Meta Title" }].map(({ name, label }) => (
-					<div key={name} className="flex flex-col gap-1">
-						<label className="font-medium text-sm text-gray-700">
-							{label} <span className="text-red-500">*</span>
-						</label>
-						<input
-							name={name}
-							value={formData[name]}
-							onChange={handleChange}
-							required
-							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-							placeholder={label}
-						/>
-					</div>
-				))}
-
 				{[
+					{ name: "metaTitle", label: "Meta Title" },
 					{ name: "metaDescription", label: "Meta Description" },
 					{ name: "metaKeywords", label: "Meta Keywords" },
 				].map(({ name, label }) => (
@@ -166,15 +153,26 @@ export default function EditBlog({ data }) {
 						<label className="font-medium text-sm text-gray-700">
 							{label} <span className="text-red-500">*</span>
 						</label>
-						<textarea
-							name={name}
-							rows="4"
-							placeholder={label}
-							value={formData[name]}
-							onChange={handleChange}
-							className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
-							required
-						/>
+						{name === "metaDescription" || name === "metaKeywords" ? (
+							<textarea
+								name={name}
+								rows="4"
+								value={formData[name]}
+								onChange={handleChange}
+								placeholder={label}
+								required
+								className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
+							/>
+						) : (
+							<input
+								name={name}
+								value={formData[name]}
+								onChange={handleChange}
+								required
+								className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
+								placeholder={label}
+							/>
+						)}
 					</div>
 				))}
 
@@ -204,54 +202,46 @@ export default function EditBlog({ data }) {
 					</div>
 				</div>
 
-				<SchemaEditor
-					schemaItems={schemaItems}
-					setSchemaItems={setSchemaItems}
-				/>
+				{[{ name: "schema", label: "Schema" }].map(({ name, label }) => (
+					<div key={name} className="flex flex-col gap-1">
+						<label className="font-medium text-sm text-gray-700">
+							{label} <span className="text-red-500">*</span>
+						</label>
+						<textarea
+							name={name}
+							rows="6"
+							placeholder={label}
+							value={formData[name]}
+							onChange={handleChange}
+							className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
+							required
+						/>
+					</div>
+				))}
 
-				<div className="flex flex-col gap-1">
-					<label className="font-medium text-sm text-gray-700">
-						Slug <span className="text-red-500">*</span>
-					</label>
-					<input
-						name="slug"
-						className={`border outline-none focus:border-gray-400 rounded p-3 ${
-							isSlugUsed ? "border-red-400" : "border-gray-200"
-						}`}
-						placeholder="Slug"
-						value={formData.slug}
-						onChange={handleChange}
-						required
-					/>
-				</div>
-
-				<div className="flex flex-col gap-1">
-					<label className="font-medium text-sm text-gray-700">
-						Title <span className="text-red-500">*</span>
-					</label>
-					<input
-						name="title"
-						className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-						placeholder="Title"
-						value={formData.title}
-						onChange={handleChange}
-						required
-					/>
-				</div>
-
-				<div className="flex flex-col gap-1">
-					<label className="font-medium text-sm text-gray-700">
-						Category <span className="text-red-500">*</span>
-					</label>
-					<input
-						name="category"
-						className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-						placeholder="Category"
-						value={formData.category}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+				{[
+					{ name: "slug", label: "Slug" },
+					{ name: "title", label: "Title" },
+					{ name: "category", label: "Category" },
+				].map(({ name, label }) => (
+					<div key={name} className="flex flex-col gap-1">
+						<label className="font-medium text-sm text-gray-700">
+							{label} <span className="text-red-500">*</span>
+						</label>
+						<input
+							name={name}
+							value={formData[name]}
+							onChange={handleChange}
+							required
+							className={`border outline-none focus:border-gray-400 rounded p-3 ${
+								name === "slug" && isSlugUsed
+									? "border-red-400"
+									: "border-gray-200"
+							}`}
+							placeholder={label}
+						/>
+					</div>
+				))}
 
 				<div className="flex flex-col gap-1">
 					<label className="font-medium text-sm text-gray-700">
@@ -295,7 +285,7 @@ function UploadPlaceholder({ onChange }) {
 	return (
 		<label className="cursor-pointer active:bg-gray-100 border border-dashed border-gray-300 rounded-lg w-full max-w-44 h-44 flex items-center justify-center">
 			<div>
-				<p className="block text-center text-gray-600">+</p>
+				<p className="block text-center text-gray-600 text-2xl">+</p>
 				<p className="block text-xs text-gray-600">Upload Photo</p>
 			</div>
 			<input

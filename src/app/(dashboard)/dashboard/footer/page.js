@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Loading from "@/components/Loading";
 import { BiSolidEdit } from "react-icons/bi";
@@ -15,12 +15,12 @@ export default function Page() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-			const res = await axios.get(`${process.env.BASE_URL}/footer-content`);
-			setData(res.data);
+				const res = await axios.get(`${process.env.BASE_URL}/footer-content`);
+				setData(res.data);
 			} catch (err) {
-			setError(err.message || "Failed to fetch Data");
+				setError(err.message || "Failed to fetch Data");
 			} finally {
-			setLoading(false);
+				setLoading(false);
 			}
 		};
 		fetchData();
@@ -80,67 +80,115 @@ export default function Page() {
 				{data.map((item, idx) =>
 					Object.entries(item).map(([key, value], index) =>
 						key !== "_id" && key !== "images" && key !== "imgUrl" ? (
-							<div
-								key={`${idx}-${index}`}
-								className={`p-4 bg-white rounded-lg border cursor-pointer transition-all duration-300 ${
-									openIndex === `${idx}-${index}`
-										? "border-gray-400"
-										: "border-gray-200"
-								}`}>
-								<h3
-									onClick={() => toggleFAQ(`${idx}-${index}`)}
-									className="font-semibold flex justify-between items-center capitalize">
-									{key}
-									<span className="text-xl">
-										{openIndex === `${idx}-${index}` ? "−" : "+"}
-									</span>
-								</h3>
-
+							key === "services" ? (
 								<div
-									className={`grid transition-all duration-500 overflow-hidden ${
+									key={`${idx}-${index}`}
+									className="p-10 bg-gray-100 rounded-lg space-y-4">
+									<h3 className="text-xl font-bold text-teal-700 mb-4">
+										Services
+									</h3>
+									{Array.isArray(value) &&
+										value.map((service, sIdx) => (
+											<div
+												key={sIdx}
+												className={`p-4 bg-white rounded-lg border transition-all duration-300 ease-in-out cursor-pointer ${
+													openIndex === `services-${sIdx}`
+														? "border-gray-400"
+														: "border-gray-200"
+												}`}>
+												<h3
+													onClick={() => toggleFAQ(`services-${sIdx}`)}
+													className="font-semibold flex justify-between items-center capitalize">
+													Service {sIdx + 1}
+													<span className="text-xl">
+														{openIndex === `services-${sIdx}` ? "−" : "+"}
+													</span>
+												</h3>
+
+												<div
+													className={`transition-all overflow-hidden duration-300 ease-in-out ${
+														openIndex === `services-${sIdx}`
+															? "max-h-[1000px] mt-4"
+															: "max-h-0"
+													}`}>
+													<div className="mt-4 space-y-4">
+														<div className="bg-gray-50 p-3 rounded-lg border">
+															<h4 className="font-semibold">Title</h4>
+															<p className="text-gray-600 mt-2">{service.title}</p>
+														</div>
+														<div className="bg-gray-50 p-3 rounded-lg border">
+															<h4 className="font-semibold">Link</h4>
+															<a
+																href={service.link}
+																target="_blank"
+																rel="noopener noreferrer"
+																className="text-blue-500 underline break-all block mt-2"
+															>
+																{service.link}
+															</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										))}
+								</div>
+							) : (
+								<div
+									key={`${idx}-${index}`}
+									className={`p-4 bg-white rounded-lg border cursor-pointer transition-all duration-300 ${
 										openIndex === `${idx}-${index}`
-											? "grid-rows-[1fr] opacity-100 mt-2"
-											: "grid-rows-[0fr] opacity-0"
+											? "border-gray-400"
+											: "border-gray-200"
 									}`}>
-									<div className="overflow-hidden">
-										{Array.isArray(value) ? (
-											<ul className="list-disc list-inside space-y-1 text-gray-600">
-												{value.map((service, idx) => (
-													<li key={idx}>{service}</li>
-												))}
-											</ul>
-										) : typeof value === "object" && value !== null ? (
-											<ul className="list-disc list-inside space-y-1 text-gray-600">
-												{Object.entries(value).map(
-													([subKey, subValue], subIndex) => (
-														<li key={subIndex}>
-															<span className="font-medium capitalize">
-																{subKey} :
-															</span>{" "}
-															{typeof subValue === "string" &&
-															subValue.startsWith("www.") ? (
-																<a
-																	href={`https://${subValue}`}
-																	target="_blank"
-																	rel="noopener noreferrer"
-																	className="text-blue-500 underline">
-																	{subValue}
-																</a>
-															) : (
-																subValue
-															)}
-														</li>
-													),
-												)}
-											</ul>
-										) : (
-											<p className="text-gray-600">{value}</p>
-										)}
+									<h3
+										onClick={() => toggleFAQ(`${idx}-${index}`)}
+										className="font-semibold flex justify-between items-center capitalize">
+										{key}
+										<span className="text-xl">
+											{openIndex === `${idx}-${index}` ? "−" : "+"}
+										</span>
+									</h3>
+
+									<div
+										className={`grid transition-all duration-500 overflow-hidden ${
+											openIndex === `${idx}-${index}`
+												? "grid-rows-[1fr] opacity-100 mt-2"
+												: "grid-rows-[0fr] opacity-0"
+										}`}>
+										<div className="overflow-hidden">
+											{typeof value === "object" && value !== null ? (
+												<ul className="list-disc list-inside space-y-1 text-gray-600">
+													{Object.entries(value).map(
+														([subKey, subValue], subIndex) => (
+															<li key={subIndex}>
+																<span className="font-medium capitalize">
+																	{subKey} :
+																</span>{" "}
+																{typeof subValue === "string" &&
+																subValue.startsWith("www.") ? (
+																	<a
+																		href={`https://${subValue}`}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="text-blue-500 underline">
+																		{subValue}
+																	</a>
+																) : (
+																	subValue
+																)}
+															</li>
+														)
+													)}
+												</ul>
+											) : (
+												<p className="text-gray-600">{value}</p>
+											)}
+										</div>
 									</div>
 								</div>
-							</div>
-						) : null,
-					),
+							)
+						) : null
+					)
 				)}
 			</div>
 		</div>

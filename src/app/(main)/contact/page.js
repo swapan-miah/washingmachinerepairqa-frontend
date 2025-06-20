@@ -1,9 +1,10 @@
-import Blogs from "@/components/Blogs";
-import BlogsData from "../../../../lib/BlogsData";
+import Contact from "@/components/Contact";
+import Map from "@/components/Map";
+import ContactData from "../../../../lib/ContactData";
 import SchemaScript from "@/components/SchemaScript";
 
 export async function generateMetadata() {
-	const data = await BlogsData();
+	const data = await ContactData();
 
 	return {
 		title: data?.title,
@@ -18,13 +19,13 @@ export async function generateMetadata() {
 }
 
 export default async function page() {
-
-	const data = await BlogsData();
+	const data = await ContactData();
 
 	return (
 		<>
-			{data?.schema && <SchemaScript schema={data.schema} id="blogs" />}
-			<Blogs showAll={true}/>
+			{data?.schema && <SchemaScript schema={data.schema} id="contact" />}
+			<Contact />
+			<Map />
 		</>
 	);
 }

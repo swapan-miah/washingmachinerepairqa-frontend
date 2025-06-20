@@ -1,34 +1,46 @@
 "use client";
+import Loading from "@/components/Loading";
+import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import Loading from "@/components/Loading";
-import { BiSolidEdit } from "react-icons/bi";
+import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { BiSolidEdit } from "react-icons/bi";
 
-export default function Page() {
-	const [openIndex, setOpenIndex] = useState(null);
-	const [data, setData] = useState(null);
+export default function page() {
+	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const res = await axios.get(`${process.env.BASE_URL}/hero-slider`);
-				setData(res.data);
-			} catch (err) {
-				setError(err.message || "Failed to Fetch");
-			} finally {
-				setLoading(false);
-			}
-		};
+	const fetchData = async () => {
+		try {
+			const res = await axios.get(`${process.env.BASE_URL}/hero-slider`);
+			setData(res.data);
+		} catch (err) {
+			setError(err.message || "Failed to fetch Data");
+		} finally {
+			setLoading(false);
+		}
+	};
 
+	useEffect(() => {
 		fetchData();
 	}, []);
 
-	const toggleFAQ = (index) => {
-		setOpenIndex(openIndex === index ? null : index);
+	const handleDelete = async (id) => {
+		setLoading(true);
+		try {
+			const res = await axios.delete(`${process.env.BASE_URL}/delate-slider/${id}`);
+			if (res.data.deletedCount > 0) {
+				await fetchData();
+				toast.success("Successfully Deleted!");
+			}
+		} catch (error) {
+			console.error("Delete failed:", error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	if (loading) {
@@ -51,70 +63,146 @@ export default function Page() {
 				<h2 className="relative text-lg font-semibold text-gray-800 mb-2 pb-2 after:absolute after:bottom-0 after:left-0 after:w-20 after:h-[2px] after:bg-black before:absolute before:bottom-1 before:left-0 before:w-28 before:h-[2px] before:bg-[#0d9488]">
 					Hero Slider
 				</h2>
-				<Link
-					href={`/dashboard/hero/edit/${data._id}`}
-					onClick={() => setLoading(true)}>
+				<Link href="/dashboard/hero/create">
 					<button className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded flex items-center justify-center gap-1">
-						<BiSolidEdit />
-						Edit
+						<BiSolidEdit /> Create
 					</button>
 				</Link>
 			</div>
 
-			<div className="space-y-4 bg-white border border-gray-200 rounded p-5">
-				{Object.entries(data).map(
-					([key, value], index) =>
-						key !== "_id" &&
-						key !== "images" && (
-							<div
-								key={index}
-								className={`bg-white rounded-lg border overflow-hidden transition-all duration-300 ${
-									openIndex === index ? "border-gray-400" : "border-gray-200"
-								}`}>
-								<h3
-									onClick={() => toggleFAQ(index)}
-									className="cursor-pointer p-4 font-semibold flex justify-between items-center capitalize">
-									{key}
-									<span className="text-xl">
-										{openIndex === index ? "−" : "+"}
-									</span>
-								</h3>
-
-								<div
-									className={`grid transition-all duration-500 ease-in-out px-4 ${
-										openIndex === index
-											? "grid-rows-[1fr] py-3"
-											: "grid-rows-[0fr] py-0"
-									}`}>
-									<div className="overflow-hidden">
-										<p className="text-gray-600">
-											{Array.isArray(value) ? value.join(", ") : value}
-										</p>
+			<div className="overflow-x-auto">
+				<table className="hidden min-w-full lg:table border border-gray-200">
+					<thead className="bg-[#0d9488] text-white">
+						<tr>
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[150px]">
+								Photo
+							</th>
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[150px]">
+								Number
+							</th>
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[300px]">
+								Title
+							</th>
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
+								Description
+							</th>
+							<th className="px-4 py-2 text-right text-sm font-semibold uppercase">
+								Action
+							</th>
+						</tr>
+					</thead>
+					<tbody className="bg-white">
+						{[...data].reverse().map((sData) => (
+							<tr
+								key={sData._id}
+								className="hover:bg-gray-50 border-b border-gray-200 py-2">
+								<td className="px-4 py-3 text-sm">
+									<div className="flex items-center">
+										{sData?.imgUrl && (
+											<Image
+												className="h-16 object-cover rounded w-[100px] max-w-[200px]"
+												width={150}
+												height={100}
+												src={sData.imgUrl}
+												alt="Blogs"
+											/>
+										)}
 									</div>
+								</td>
+								<td className="px-4 py-3 text-sm w-[100px] max-w-[200px]">
+									<span className="line-clamp-1 break-all">{sData?.number}</span>
+								</td>
+								<td className="px-4 py-3 text-sm w-[250px] max-w-[350px]">
+									<span className="line-clamp-2 break-all">{sData?.title}</span>
+								</td>
+								<td className="px-4 py-3 text-sm">
+									<span className="line-clamp-2 break-all">
+										{sData?.description}
+									</span>
+								</td>
+								<td className="px-4 py-3 text-sm text-right">
+									<div className="w-full flex items-center justify-end gap-2">
+										<Link
+											href={`/dashboard/hero/edit/${sData._id}`}
+											onClick={() => setLoading(true)}>
+											<button className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
+												<MdModeEditOutline className="size-6" />
+											</button>
+										</Link>
+										<button
+											onClick={() => handleDelete(sData._id)}
+											className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
+											<MdDelete className="size-6" />
+										</button>
+									</div>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+
+				<div className="lg:hidden space-y-4 mt-4">
+					{[...data].reverse().map((sData) => (
+						<div
+							key={sData._id}
+							className="divide-y divide-gray-100 bg-white border border-gray-200 rounded-lg">
+							<div className="flex justify-between gap-3 px-3 py-4">
+								<div className="flex items-center">
+									{sData?.imgUrl && (
+										<Image
+											className="w-20 h-14 object-cover rounded print:w-[250px] print:h-auto"
+											width={150}
+											height={100}
+											src={sData.imgUrl}
+											alt="Blogs"
+										/>
+									)}
+								</div>
+								<div className="flex items-center justify-end gap-3">
+									<Link
+										href={`/dashboard/hero/edit/${sData._id}`}
+										onClick={() => setLoading(true)}>
+										<button className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
+											<MdModeEditOutline className="size-5" />
+										</button>
+									</Link>
+									<button
+										onClick={() => handleDelete(sData._id)}
+										className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
+										<MdDelete className="size-5" />
+									</button>
 								</div>
 							</div>
-						),
-				)}
 
-				{data.images && data.images.length > 0 && (
-					<div className="flex gap-5 flex-wrap pt-3">
-						{data.images.map((img, i) => (
-							<div
-								key={i}
-								className="w-[200px] h-[100px] cursor-pointer rounded overflow-hidden">
-								{img && (
-									<Image
-										className="w-full h-full object-cover"
-										width={200}
-										height={100}
-										src={img}
-										alt={`image-${i}`}
-									/>
-								)}
+							<div className="flex justify-between gap-3 px-3 py-4">
+								<span className="text-md font-semibold text-gray-700">
+									Title:
+								</span>
+								<span className="text-md text-gray-900 line-clamp-1">
+									{sData?.title}
+								</span>
 							</div>
-						))}
-					</div>
-				)}
+
+							<div className="flex justify-between gap-3 px-3 py-4">
+								<span className="text-md font-semibold text-gray-700">
+									Description:
+								</span>
+								<span className="text-md text-gray-900 line-clamp-1">
+									{sData?.description}
+								</span>
+							</div>
+
+							<div className="flex justify-between gap-3 px-3 py-4">
+								<span className="text-md font-semibold text-gray-700">
+									Number:
+								</span>
+								<span className="text-md text-gray-900 line-clamp-2">
+									{sData?.number}
+								</span>
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);

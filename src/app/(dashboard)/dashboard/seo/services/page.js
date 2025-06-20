@@ -88,7 +88,6 @@ export default function Page() {
                             key !== "images" &&
                             key !== "name" &&
                             key !== "title" &&
-                            key !== "schema" &&
                             value && (
                             <div
                                 key={index}

@@ -46,6 +46,8 @@ export default function Navbar({ data }) {
 				setActiveRoute("about");
 			} else if (currentPath === "/blogs") {
 				setActiveRoute("blogs");
+			} else if (currentPath === "/contact") {
+				setActiveRoute("contact");
 			}
 		}
 	}, [router.pathname]);
@@ -65,7 +67,7 @@ export default function Navbar({ data }) {
 			)}
 
 			<nav className="sticky top-0 w-full z-50 bg-white text-gray-900 shadow-sm transition duration-300">
-				<div className="container mx-auto py-4 flex justify-between items-center">
+				<div className="min-h-20 md:h-auto container mx-auto py-4 flex justify-between items-center">
 					<div className="text-2xl font-bold tracking-wide flex items-center gap-2">
 						<Link href="/">
 							<div className="rounded-full cursor-pointer">
@@ -141,13 +143,27 @@ export default function Navbar({ data }) {
 								Blogs
 							</Link>
 						</li>
+
 						<li className="text-center md:text-left py-4 md:py-0">
+							<Link
+								href="/contact"
+								className={`block px-6 md:px-0 text-lg font-medium transition duration-300 ${
+									activeRoute === "contact"
+										? "text-emerald-500"
+										: "hover:text-teal-500"
+								}`}
+								onClick={() => handleActiveRoute("contact", "/contact")}>
+								Contact
+							</Link>
+						</li>
+
+						<li className="text-center md:text-left py-4 md:py-0 block md:hidden lg:block ">
 							<a
 								href={`tel:${data.number}`}
 								className="inline-flex gap-2 px-6 py-2 text-lg font-medium text-white bg-teal-600 rounded-md shadow hover:bg-teal-700 transition duration-300"
 								onClick={() => setMenuOpen(false)}>
 								<Image width={20} height={20} src={contact} alt="Contact" />
-								Contact
+								For Support
 							</a>
 						</li>
 					</ul>

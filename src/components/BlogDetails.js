@@ -8,7 +8,7 @@ import { MdOutlineDateRange } from "react-icons/md";
 import { TbTag } from "react-icons/tb";
 import { FaHome } from "react-icons/fa";
 import axios from "axios";
-import Head from "next/head";
+import SchemaScript from "@/components/SchemaScript";
 
 const SkeletonLoader = () => {
 	return (
@@ -112,27 +112,11 @@ export default function BlogDetails({ params }) {
 		return <div className="p-6 text-red-500 text-center py-20">Blog not Found</div>;
 	}
 
-	const faqSchema = {
-		"@context": "https://schema.org",
-		"@type": "Washing Machine Repair in Qatar",
-		mainEntity: blog?.schema?.map((item) => ({
-			"@type": "Question",
-			name: item.question,
-			acceptedAnswer: {
-				"@type": "Answer",
-				text: item.answer,
-			},
-		})),
-	};
 
 	return (
+		<>
+		{blog?.schema && <SchemaScript schema={blog.schema} id="blog-details" />}
 		<div className="bg-white">
-			<Head>
-				<script
-					type="application/ld+json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-				/>
-			</Head>
 			<div className="bg-[#133851] py-10">
 				<div className="container mx-auto text-white">
 					<h2 className="text-lg font-medium flex items-center gap-[6px]">
@@ -225,5 +209,6 @@ export default function BlogDetails({ params }) {
 				</div>
 			</div>
 		</div>
+	</>
 	);
 }

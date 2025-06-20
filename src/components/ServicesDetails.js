@@ -6,9 +6,9 @@ import Link from "next/link";
 import { MdOutlineDateRange } from "react-icons/md";
 import { TbTag } from "react-icons/tb";
 import axios from "axios";
-import Head from "next/head";
 import { FaAngleRight } from "react-icons/fa6";
 import { FaHome } from "react-icons/fa";
+import SchemaScript from "@/components/SchemaScript";
 
 
 
@@ -102,28 +102,10 @@ export default function ServiceDetails({ params }) {
 		);
 	}
 
-	const faqSchema = {
-		"@context": "https://schema.org",
-		"@type": "Washing Machine Repair in Qatar",
-		mainEntity: service?.schema?.map((item) => ({
-			"@type": "Question",
-			name: item.question,
-			acceptedAnswer: {
-				"@type": "Answer",
-				text: item.answer,
-			},
-		})),
-	};
-
 	return (
+		<>
+		{service?.schema && <SchemaScript schema={service.schema} id="service-details" />}
 		<div className="bg-white">
-			<Head>
-				<script
-					type="application/ld+json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-				/>
-			</Head>
-
 			{/* <div className="bg-[#133851] py-10">
 				<div className="container mx-auto text-white">
 					<h2 className="text-lg font-medium flex items-center gap-[6px]">
@@ -204,5 +186,7 @@ export default function ServiceDetails({ params }) {
 				</div>
 			</div>
 		</div>
+		
+		</>
 	);
 }

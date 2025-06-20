@@ -88,11 +88,11 @@ export default function Page() {
 								<button className="bg-[#0d9488] h-[32px] w-[60px] rounded grid place-items-center text-white">
 									0{idx + 1}
 								</button>
-								{item.title}
+								{item.name}
 							</h2>
 							<div className="flex items-center justify-end gap-2">
 								<Link
-									href={`/dashboard/settings/heading-description/edit/${item._id}`}
+									href={`/dashboard/settings/heading-description/edit/${item.name}`}
 									onClick={() => setLoading(true)}>
 									<button className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
 										<MdModeEditOutline className="size-6" />
@@ -110,7 +110,8 @@ export default function Page() {
 							([key, value], index) =>
 								key !== "_id" &&
 								key !== "images" &&
-								key !== "name" && value && (
+								key !== "name" &&
+								value && (
 									<div
 										key={`${idx}-${index}`}
 										className={`p-4 bg-white rounded-lg border cursor-pointer transition-all duration-300 ${
@@ -150,7 +151,7 @@ export default function Page() {
 											</div>
 										</div>
 									</div>
-								)
+								),
 						)}
 					</div>
 				))}

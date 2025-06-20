@@ -8,15 +8,10 @@ import { BiSolidEdit } from "react-icons/bi";
 
 const labels = {
 	gtm_id: "GTM_ID",
-	btn_link: "Slider Button Link",
 	email: "Email",
 	copyright_text: "CopyRight Text",
 	number: "Phone Number",
 	whats_app: "Whats App",
-	facebook_url: "Facebook Link",
-	twitter_link: "Twitter Link",
-	instagram_link: "Instagram Link",
-	youtube_link: "YouTube Link",
 };
 
 export default function DisplaySettings() {

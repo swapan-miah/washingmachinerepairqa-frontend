@@ -6,40 +6,37 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import Loading from "./Loading";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 export default function EditHero({ data }) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
+    const [image, setImage] = useState(null);
+	const [imageRemoved, setImageRemoved] = useState(false);
+
 
 	const [formData, setFormData] = useState({
 		title: data.title || "",
 		number: data.number || "",
+		link: data.link || "",
 		description: data.description || "",
 	});
-
-	const [oldImages, setOldImages] = useState(data.images || []);
-	const [newImages, setNewImages] = useState([]);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleImageChange = (e) => {
+    const handleImageChange = (e) => {
 		const file = e.target.files[0];
-		if (file && newImages.length + oldImages.length < 4) {
-			setNewImages((prev) => [
-				...prev,
-				{ file, preview: URL.createObjectURL(file) },
-			]);
+		if (file) {
+			setImage(file);
+			setImageRemoved(false);
 		}
 	};
 
-	const handleRemoveOldImage = (index) => {
-		setOldImages((prev) => prev.filter((_, i) => i !== index));
-	};
-
-	const handleRemoveNewImage = (index) => {
-		setNewImages((prev) => prev.filter((_, i) => i !== index));
+	const handleRemoveImage = () => {
+		setImage(null);
+		setImageRemoved(true);
 	};
 
 	const handleSubmit = async (e) => {
@@ -47,31 +44,23 @@ export default function EditHero({ data }) {
 		setLoading(true);
 
 		try {
-			const uploadedUrls = [];
+			let uploadedImageUrl = data.imgUrl;
 
-			for (const img of newImages) {
-				const form = new FormData();
-				form.append("file", img.file);
-				form.append("upload_preset", "washing-machine");
-
-				const res = await axios.post(
-					`https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/image/upload`,
-					form,
-				);
-				uploadedUrls.push(res.data.secure_url);
+			if (image) {
+				uploadedImageUrl = await uploadToCloudinary(image);
+			} else if (imageRemoved) {
+				uploadedImageUrl = "";
 			}
-
-			const finalImageList = [...oldImages, ...uploadedUrls];
 
 			await axios.put(`${process.env.BASE_URL}/hero-slider/edit/${data._id}`, {
 				title: formData.title,
-				number: formData.number,
 				description: formData.description,
-				images: finalImageList,
+				number: formData.number,
+				link: formData.link,
+				imgUrl: uploadedImageUrl,
 			});
 
 			setFormData({ title: "", number: "", description: "" });
-			setOldImages([]);
 			router.push("/dashboard/hero");
 			toast.success("Updated Successfully!");
 			setTimeout(() => {
@@ -79,8 +68,6 @@ export default function EditHero({ data }) {
 			}, 2000);
 		} catch (error) {
 			setLoading(false);
-			console.log(error);
-
 			toast.error("Update failed");
 		}
 	};
@@ -94,6 +81,22 @@ export default function EditHero({ data }) {
 			<form
 				onSubmit={handleSubmit}
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
+
+				<div className="grid grid-cols-2 gap-2">
+					{imageRemoved ? (
+						<UploadPlaceholder onChange={handleImageChange} />
+					) : image ? (
+						<PreviewImage
+							image={URL.createObjectURL(image)}
+							onRemove={handleRemoveImage}
+						/>
+					) : data?.imgUrl ? (
+						<PreviewImage image={data.imgUrl} onRemove={handleRemoveImage} />
+					) : (
+						<UploadPlaceholder onChange={handleImageChange} />
+					)}
+				</div>
+
 				<div className="flex flex-col gap-1">
 					<label htmlFor="title" className="font-medium text-sm text-gray-700">
 						Title <span className="text-red-500">*</span>
@@ -108,23 +111,7 @@ export default function EditHero({ data }) {
 						required
 					/>
 				</div>
-
-				<div className="flex flex-col gap-1">
-					<label htmlFor="number" className="font-medium text-sm text-gray-700">
-						Number <span className="text-red-500">*</span>
-					</label>
-					<input
-						id="number"
-						name="number"
-						value={formData.number}
-						onChange={handleChange}
-						placeholder="Number"
-						className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-						required
-					/>
-				</div>
-
-				<div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
 					<label
 						htmlFor="description"
 						className="font-medium text-sm text-gray-700">
@@ -141,68 +128,34 @@ export default function EditHero({ data }) {
 						required
 					/>
 				</div>
-
-				<div className="flex flex-col gap-2">
-					<label className="font-medium text-sm text-gray-700">
-						Images <span className="text-red-500">*</span>
-						<span className="text-gray-400 text-xs ml-1">(max 4)</span>
+				<div className="flex flex-col gap-1">
+					<label htmlFor="number" className="font-medium text-sm text-gray-700">
+						Number <span className="text-red-500">*</span>
 					</label>
-					<div className="flex flex-wrap gap-4">
-						{oldImages.map((img, index) => (
-							<div key={index} className="relative w-24 h-24">
-								{img && (
-									<Image
-										src={img}
-										width={100}
-										height={100}
-										alt={`old-${index}`}
-										className="w-full h-full object-cover rounded shadow"
-									/>
-								)}
+					<input
+						id="number"
+						name="number"
+						value={formData.number}
+						onChange={handleChange}
+						placeholder="Number"
+						className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
+						required
+					/>
+				</div>
 
-								<button
-									type="button"
-									onClick={() => handleRemoveOldImage(index)}
-									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100">
-									<MdClose size={16} className="text-red-500" />
-								</button>
-							</div>
-						))}
-
-						{newImages.map((img, index) => (
-							<div key={index} className="relative w-24 h-24">
-								{img?.preview && (
-									<Image
-										src={img.preview}
-										width={100}
-										height={100}
-										alt={`new-${index}`}
-										className="w-full h-full object-cover rounded shadow"
-									/>
-								)}
-
-								<button
-									type="button"
-									onClick={() => handleRemoveNewImage(index)}
-									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100">
-									<MdClose size={16} className="text-red-500" />
-								</button>
-							</div>
-						))}
-
-						{oldImages.length + newImages.length < 4 && (
-							<label className="cursor-pointer border-2 border-dashed active:bg-gray-200 rounded-lg w-24 h-24 flex items-center justify-center text-gray-500">
-								+
-								<input
-									type="file"
-									accept="image/*"
-									className="hidden"
-									onChange={handleImageChange}
-									required={oldImages.length + newImages.length === 0}
-								/>
-							</label>
-						)}
-					</div>
+				<div className="flex flex-col gap-1">
+					<label htmlFor="link" className="font-medium text-sm text-gray-700">
+						Link <span className="text-red-500">*</span>
+					</label>
+					<input
+						id="link"
+						name="link"
+						value={formData.link}
+						onChange={handleChange}
+						placeholder="Link"
+						className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
+						required
+					/>
 				</div>
 
 				<button
@@ -212,5 +165,44 @@ export default function EditHero({ data }) {
 				</button>
 			</form>
 		</div>
+	);
+}
+
+
+function PreviewImage({ image, onRemove }) {
+	return (
+		<div className="relative w-full max-w-44 h-44">
+			<Image
+				src={image}
+				width={100}
+				height={100}
+				className="w-full h-full object-cover rounded shadow"
+				alt="Image Preview"
+			/>
+			<button
+				type="button"
+				onClick={onRemove}
+				className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100"
+				title="Remove">
+				<MdClose size={16} className="text-red-500" />
+			</button>
+		</div>
+	);
+}
+
+function UploadPlaceholder({ onChange }) {
+	return (
+		<label className="cursor-pointer active:bg-gray-100 border border-dashed border-gray-300 rounded-lg w-full max-w-44 h-44 flex items-center justify-center">
+			<div>
+				<p className="block text-center text-gray-600 text-2xl">+</p>
+				<p className="block text-xs text-gray-600">Upload Photo</p>
+			</div>
+			<input
+				type="file"
+				accept="image/*"
+				className="hidden"
+				onChange={onChange}
+			/>
+		</label>
 	);
 }

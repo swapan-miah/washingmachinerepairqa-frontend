@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../../../public/logo4.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../../lib/firebase";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function LoginPage() {
 	const [show, setShow] = useState(false);
@@ -14,6 +15,22 @@ export default function LoginPage() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+		try {
+			const res = await axios.get(`${process.env.BASE_URL}/settings`);
+			setData(res.data);
+		} catch (err) {
+			setError(err.message || "Failed to fetch Data");
+		} finally {
+			setLoading(false);
+		}
+		};
+
+		fetchData();
+	}, []);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -35,9 +52,11 @@ export default function LoginPage() {
 	return (
 		<div className="min-h-[100vh] bg-slate-50 flex items-center justify-center">
 			<div className="bg-white w-[100%] sm:w-[80%] md:w-[60%] lg:w-[35%] max-w-[500px] border p-10 px-8 m-3 md:mx-0 md:my-5 rounded">
-				<div className="flex items-center justify-center">
-					<Image src={logo} width={100} height={100} alt="Logo" />
+				{
+					data?.logo && <div className="flex items-center justify-center py-2">
+					<Image src={data.logo} width={100} height={100} alt="Logo" />
 				</div>
+				}
 				<div className="mx-2">
 					<p className="text-center py-3 page-title">
 						<span className="relative font-semibold">
@@ -49,9 +68,7 @@ export default function LoginPage() {
 					{error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
 					<div>
-						<label
-							htmlFor="email"
-							className="block text-sm font-medium text-gray-900">
+						<label htmlFor="email" className="block text-sm font-medium text-gray-900">
 							Email address
 						</label>
 						<div className="mt-2">
@@ -69,9 +86,7 @@ export default function LoginPage() {
 					</div>
 
 					<div>
-						<label
-							htmlFor="password"
-							className="block text-sm font-medium text-gray-900">
+						<label htmlFor="password" className="block text-sm font-medium text-gray-900">
 							Password
 						</label>
 						<div className="mt-2 relative">

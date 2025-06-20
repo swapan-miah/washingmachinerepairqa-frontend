@@ -84,13 +84,13 @@ export default function page() {
 				<table className="hidden min-w-full lg:table border border-gray-200">
 					<thead className="bg-[#0d9488] text-white">
 						<tr>
-							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[150px]">
 								Photo
 							</th>
 							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
 								Icon
 							</th>
-							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[200px]">
 								Title
 							</th>
 							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
@@ -110,7 +110,7 @@ export default function page() {
 									<div className="flex items-center">
 										{sData?.image && (
 											<Image
-												className="w-full h-16 object-cover rounded"
+												className="w-[100px] max-w-[200px] h-16 object-cover rounded"
 												width={100}
 												height={100}
 												src={sData.image}
@@ -134,7 +134,7 @@ export default function page() {
 										</div>
 									</div>
 								</td>
-								<td className="px-4 py-3 text-sm">
+								<td className="px-4 py-3 text-sm w-[150px] max-w-[250px]">
 									<span className="line-clamp-1 break-all">{sData.title}</span>
 								</td>
 								<td className="px-4 py-3 text-sm">

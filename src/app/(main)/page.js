@@ -7,11 +7,11 @@ import WhatWeDo from "@/components/WhatWeDo";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Blogs from "@/components/Blogs";
 import WashingMachineRepair from "@/components/WashingMachineRepair";
-import Contact from "@/components/Contact";
+import Accordion from "@/components/Accordion";
 import GoogleTagManager from "@/components/GoogleTagManager";
 import HomeData from "../../../lib/HomeData";
 import SettingsData from "../../../lib/SettingsData";
-import Head from "next/head";
+import SchemaScript from "@/components/SchemaScript";
 
 export async function generateMetadata() {
 	const data = await HomeData();
@@ -31,27 +31,9 @@ export async function generateMetadata() {
 export default async function Home() {
 	const [sData, data] = await Promise.all([SettingsData(), HomeData()]);
 
-	const faqSchema = {
-		"@context": "https://schema.org",
-		"@type": "Washing Machine Repair in Qatar",
-		mainEntity: data?.schema?.map((item) => ({
-			"@type": "Question",
-			name: item.question,
-			acceptedAnswer: {
-				"@type": "Answer",
-				text: item.answer,
-			},
-		})),
-	};
-
 	return (
 		<>
-		    <Head>
-				<script
-					type="application/ld+json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-				/>
-			</Head>
+			{data?.schema && <SchemaScript schema={data.schema} id="home" />}
 			<GoogleAnalytics />
 			<GoogleTagManager sData={sData} />
 			<main>
@@ -62,7 +44,7 @@ export default async function Home() {
 				<WashingMachineRepair />
 				<CustomerTestimonials />
 				<Blogs showAll={false} />
-				<Contact />
+				<Accordion />
 				<Map />
 			</main>
 		</>

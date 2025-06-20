@@ -20,25 +20,43 @@ export default function Page() {
     e.preventDefault();
 
     if (!selectedType) {
-      toast.error("Please select a section type");
+      toast.error("select a section type");
+      return;
+    }
+
+    if (!formData.title.trim()) {
+      toast.error("Title is required");
       return;
     }
 
     setLoading(true);
 
     try {
+      const { data } = await axios.get(`${process.env.BASE_URL}/section-heading`);
+
+      const sectionData = data.filter(
+        (item) =>
+          item.name === selectedType
+      );
+
+      if (sectionData.length > 0) {
+        toast.error("Already exist.");
+        setLoading(false);
+        return;
+      }
+
       await axios.post(`${process.env.BASE_URL}/create-heading`, {
         name: selectedType,
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
       });
 
+      toast.success("Created Successfully!");
       setFormData({ title: "", description: "" });
       setSelectedType("");
-      toast.success("Submitted Successfully!");
       router.push("/dashboard/settings/heading-description");
     } catch (err) {
-      toast.error("Failed to upload");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -71,6 +89,7 @@ export default function Page() {
               <option value="why-choose-us">Why Choose Us</option>
               <option value="blogs">Blogs</option>
               <option value="faq">FAQ</option>
+              <option value="contact">Contact</option>
             </select>
             <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={20} />
           </div>

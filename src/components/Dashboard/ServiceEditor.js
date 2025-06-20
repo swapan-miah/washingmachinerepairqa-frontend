@@ -1,26 +1,27 @@
 "use client";
 import { FaPlus, FaMinus } from "react-icons/fa6";
 
-export default function SchemaEditor({ schemaItems, setSchemaItems }) {
+export default function ServiceEditor({ serviceItems, setServiceItems }) {
 	const handleAddItem = () => {
-		setSchemaItems([...schemaItems, { question: "", answer: "" }]);
+		if (serviceItems.length >= 6) return;
+		setServiceItems([...serviceItems, { title: "", link: "" }]);
 	};
 
 	const handleRemoveItem = (index) => {
-		const updatedItems = [...schemaItems];
+		const updatedItems = [...serviceItems];
 		updatedItems.splice(index, 1);
-		setSchemaItems(updatedItems);
+		setServiceItems(updatedItems);
 	};
 
 	const handleItemChange = (index, field, value) => {
-		const updatedItems = [...schemaItems];
+		const updatedItems = [...serviceItems];
 		updatedItems[index][field] = value;
-		setSchemaItems(updatedItems);
+		setServiceItems(updatedItems);
 	};
 
 	return (
 		<div className="flex flex-col gap-4">
-			{schemaItems.map((item, index) => (
+			{serviceItems.map((item, index) => (
 				<div
 					key={index}
 					className="border p-4 rounded flex flex-col gap-3 bg-white">
@@ -29,10 +30,10 @@ export default function SchemaEditor({ schemaItems, setSchemaItems }) {
 							<button className="bg-[#0d9488] h-[32px] w-[60px] rounded grid place-items-center text-white">
 								{String(index + 1).padStart(2, "0")}
 							</button>
-							Schema
+							Footer Service
 						</h2>
 						<div>
-							{index === schemaItems.length - 1 ? (
+							{index === serviceItems.length - 1 && serviceItems.length < 6 ? (
 								<button
 									type="button"
 									onClick={handleAddItem}
@@ -40,46 +41,44 @@ export default function SchemaEditor({ schemaItems, setSchemaItems }) {
 									<FaPlus />
 								</button>
 							) : (
-								<button
-									type="button"
-									onClick={() => handleRemoveItem(index)}
-									className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
-									<FaMinus />
-								</button>
+								index !== serviceItems.length - 1 && (
+									<button
+										type="button"
+										onClick={() => handleRemoveItem(index)}
+										className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
+										<FaMinus />
+									</button>
+								)
 							)}
 						</div>
 					</div>
 
 					<div className="flex flex-col gap-1">
 						<label className="font-medium text-sm text-gray-700">
-							Question <span className="text-red-500">*</span>
+							Title <span className="text-red-500">*</span>
 						</label>
 						<input
 							type="text"
-							name={`question_${index}`}
-							placeholder="Question"
-							value={item.question}
-							onChange={(e) =>
-								handleItemChange(index, "question", e.target.value)
-							}
+							name={`title_${index}`}
+							placeholder="Title"
+							value={item.title}
+							onChange={(e) => handleItemChange(index, "title", e.target.value)}
 							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
 							required
 						/>
 					</div>
 
-					<div className="flex flex-col gap-1 mt-3">
+					<div className="flex flex-col gap-1">
 						<label className="font-medium text-sm text-gray-700">
-							Answer <span className="text-red-500">*</span>
+							Link <span className="text-red-500">*</span>
 						</label>
-						<textarea
-							name={`answer_${index}`}
-							rows="4"
-							value={item.answer}
-							onChange={(e) =>
-								handleItemChange(index, "answer", e.target.value)
-							}
-							className="resize-none border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
-							placeholder="Answer"
+						<input
+							type="text"
+							name={`link_${index}`}
+							placeholder="Link"
+							value={item.link}
+							onChange={(e) => handleItemChange(index, "link", e.target.value)}
+							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
 							required
 						/>
 					</div>

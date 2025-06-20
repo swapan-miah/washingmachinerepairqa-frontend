@@ -233,6 +233,15 @@ export default function Sidebar() {
 								Blogs
 							</NavLink>
 						</li>
+						<li>
+							<NavLink
+								href="/dashboard/seo/contact"
+								className={`block rounded py-1.5 px-3 text-sm border cursor-pointer ${isActive(
+									"/dashboard/seo/contact",
+								)}`}>
+								Contact
+							</NavLink>
+						</li>
 						
 					</ul>
 				</li>

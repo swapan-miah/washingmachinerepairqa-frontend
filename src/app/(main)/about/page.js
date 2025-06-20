@@ -1,9 +1,10 @@
+import React from "react";
+import AboutData from "../../../../lib/AboutData";
 import Contact from "@/components/Contact";
 import Map from "@/components/Map";
 import OurTeam from "@/components/OurTeam";
 import WhyChooseUs from "@/components/WhyChooseUs";
-import React from "react";
-import AboutData from "../../../../lib/AboutData";
+import SchemaScript from "@/components/SchemaScript";
 
 export async function generateMetadata() {
   const data = await AboutData();
@@ -12,7 +13,7 @@ export async function generateMetadata() {
     title: data?.title,
     description: data?.description,
     keywords: data?.keywords || "",
-    robots: data?.index !== "index" ? "index, follow" : "noindex, nofollow",
+    robots: data?.index === "index" ? "index, follow" : "noindex, nofollow",
     openGraph: {
       title: data?.title,
       description: data?.description,
@@ -20,14 +21,17 @@ export async function generateMetadata() {
   };
 }
 
-const Page = () => {
+const Page = async () => {
+  const data = await AboutData();
+
   return (
-    <div>
+    <>
+      {data?.schema && <SchemaScript schema={data.schema} id="about" />}
       <OurTeam />
       <WhyChooseUs />
       <Contact />
       <Map />
-    </div>
+    </>
   );
 };
 

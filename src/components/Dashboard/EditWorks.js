@@ -8,7 +8,6 @@ import { toast } from "react-hot-toast";
 import { uploadToCloudinary } from "../../../utils/uploadToCloudinary";
 import Loading from "../Loading";
 import TextEditor from "./TextEditor";
-import SchemaEditor from "./SchemaEditor";
 
 export default function EditWorks({ data }) {
 	const router = useRouter();
@@ -23,14 +22,10 @@ export default function EditWorks({ data }) {
 		metaDescription: "",
 		metaKeywords: "",
 		robotMeta: "",
+		schema: "",
 		slug: "",
 		title: "",
 	});
-
-	const [schemaItems, setSchemaItems] = useState(
-		Array.isArray(data?.schema) ? data.schema : [],
-	);
-
 	const [isSlugUsed, setIsSlugUsed] = useState(false);
 
 	useEffect(() => {
@@ -39,6 +34,7 @@ export default function EditWorks({ data }) {
 			metaDescription: data?.metaDescription || "",
 			metaKeywords: data?.metaKeywords || "",
 			robotMeta: data?.robotMeta || "",
+			schema: data?.schema || "",
 			slug: data?.slug || "",
 			title: data?.title || "",
 		});
@@ -83,11 +79,17 @@ export default function EditWorks({ data }) {
 		e.preventDefault();
 		setLoading(true);
 
-		const { metaTitle, metaDescription, metaKeywords, robotMeta, slug, title } =
-			formData;
+		const {
+			metaTitle,
+			metaDescription,
+			metaKeywords,
+			robotMeta,
+			schema,
+			slug,
+			title,
+		} = formData;
 
 		const description = editorContent;
-		const schema = schemaItems;
 
 		let uploadedImageUrl = data.image;
 		let uploadedSvgUrl = data.svgIcon;
@@ -104,18 +106,33 @@ export default function EditWorks({ data }) {
 			uploadedSvgUrl = "";
 		}
 
+		let cleanSchema = schema.trim();
+		if (cleanSchema.startsWith("<script")) {
+			const matched = cleanSchema.match(/<script[^>]*>([\s\S]*?)<\/script>/);
+			if (matched && matched[1]) {
+				cleanSchema = matched[1].trim();
+			}
+		}
+		try {
+			JSON.parse(cleanSchema);
+		} catch (err) {
+			toast.error("Invalid JSON in Schema field.");
+			setLoading(false);
+			return;
+		}
+
 		try {
 			const res = await axios.get(`${process.env.BASE_URL}/services-skills`);
 			const allServices = res.data;
 
 			const slugUsed = allServices.some(
-				(service) => service.slug === formData.slug && service._id !== data._id,
+				(service) => service.slug === slug && service._id !== data._id
 			);
 
 			if (slugUsed) {
 				setIsSlugUsed(true);
-				setLoading(false);
 				toast.error("Slug already exists.");
+				setLoading(false);
 				return;
 			}
 
@@ -126,13 +143,13 @@ export default function EditWorks({ data }) {
 					metaDescription,
 					metaKeywords,
 					robotMeta,
-					schema,
+					schema: cleanSchema,
 					slug,
 					title,
 					description,
 					svgIcon: uploadedSvgUrl,
 					image: uploadedImageUrl,
-				},
+				}
 			);
 
 			router.push("/dashboard/skills");
@@ -141,9 +158,7 @@ export default function EditWorks({ data }) {
 			console.error(err);
 			toast.error("Failed to update");
 		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 2000);
+			setTimeout(() => setLoading(false), 2000);
 		}
 	};
 
@@ -156,62 +171,35 @@ export default function EditWorks({ data }) {
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
 				<div className="grid grid-cols-2 gap-2">
 					{imageRemoved ? (
-						<UploadBlock
-							label="Photo"
-							onChange={handleImageChange}
-							accept="image/*"
-						/>
+						<UploadBlock label="Photo" onChange={handleImageChange} accept="image/*" />
 					) : image ? (
 						<PreviewBlock file={image} onRemove={handleRemoveImage} />
 					) : data.image ? (
-						<PreviewBlock
-							file={data.image}
-							onRemove={handleRemoveImage}
-							existing
-						/>
+						<PreviewBlock file={data.image} onRemove={handleRemoveImage} existing />
 					) : (
-						<UploadBlock
-							label="Photo"
-							onChange={handleImageChange}
-							accept="image/*"
-						/>
+						<UploadBlock label="Photo" onChange={handleImageChange} accept="image/*" />
 					)}
 
 					{svgRemoved ? (
-						<UploadBlock
-							label="Icon"
-							onChange={handleSvgChange}
-							accept=".svg"
-						/>
+						<UploadBlock label="Icon" onChange={handleSvgChange} accept=".svg" />
 					) : svgFile ? (
 						<PreviewBlock file={svgFile} onRemove={handleRemoveSvg} />
 					) : data.svgIcon ? (
-						<PreviewBlock
-							file={data.svgIcon}
-							onRemove={handleRemoveSvg}
-							existing
-						/>
+						<PreviewBlock file={data.svgIcon} onRemove={handleRemoveSvg} existing />
 					) : (
-						<UploadBlock
-							label="Icon"
-							onChange={handleSvgChange}
-							accept=".svg"
-						/>
+						<UploadBlock label="Icon" onChange={handleSvgChange} accept=".svg" />
 					)}
 				</div>
 
 				{[{ name: "metaTitle", label: "Meta Title" }].map(({ name, label }) => (
 					<div key={name} className="flex flex-col gap-1">
-						<label className="font-medium text-sm text-gray-700">
-							{label} <span className="text-red-500">*</span>
-						</label>
+						<label className="text-sm font-medium text-gray-700">{label}</label>
 						<input
 							name={name}
 							value={formData[name]}
 							onChange={handleChange}
 							required
-							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-							placeholder={label}
+							className="p-3 border border-gray-200 rounded outline-none focus:border-gray-400"
 						/>
 					</div>
 				))}
@@ -221,38 +209,30 @@ export default function EditWorks({ data }) {
 					{ name: "metaKeywords", label: "Meta Keywords" },
 				].map(({ name, label }) => (
 					<div key={name} className="flex flex-col gap-1">
-						<label className="font-medium text-sm text-gray-700">
-							{label} <span className="text-red-500">*</span>
-						</label>
+						<label className="text-sm font-medium text-gray-700">{label}</label>
 						<textarea
 							name={name}
 							rows="4"
-							placeholder={label}
 							value={formData[name]}
 							onChange={handleChange}
-							className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
 							required
+							className="w-full p-3 border border-gray-200 rounded outline-none focus:border-gray-400 resize-none"
 						/>
 					</div>
 				))}
 
 				<div className="flex flex-col gap-2">
-					<label className="font-medium text-sm text-gray-700">
-						Robots Meta <span className="text-red-500">*</span>
-					</label>
+					<label className="text-sm font-medium text-gray-700">Robots Meta</label>
 					<div className="flex flex-col sm:flex-row gap-3">
 						{["index", "noindex"].map((option) => (
-							<label
-								key={option}
-								className="flex items-center gap-3 p-3 border border-gray-300 rounded cursor-pointer">
+							<label key={option} className="flex items-center gap-3 p-3 border border-gray-300 rounded cursor-pointer">
 								<input
 									type="radio"
 									name="robotMeta"
 									value={option}
 									checked={formData.robotMeta === option}
 									onChange={handleChange}
-									className="w-4 h-4 text-red-600 accent-[#0d9488]"
-									required
+									className="w-4 h-4 accent-[#0d9488]"
 								/>
 								<span className="capitalize text-sm">
 									{option === "noindex" ? "No Index" : option}
@@ -262,53 +242,48 @@ export default function EditWorks({ data }) {
 					</div>
 				</div>
 
-				<SchemaEditor
-					schemaItems={schemaItems}
-					setSchemaItems={setSchemaItems}
-				/>
-
 				<div className="flex flex-col gap-1">
-					<label className="font-medium text-sm text-gray-700">
-						Slug <span className="text-red-500">*</span>
-					</label>
-					<input
-						name="slug"
-						className={`border outline-none focus:border-gray-400 rounded p-3 ${
-							isSlugUsed ? "border-red-400" : "border-gray-200"
-						}`}
-						placeholder="Slug"
-						value={formData.slug}
+					<label className="text-sm font-medium text-gray-700">Schema</label>
+					<textarea
+						name="schema"
+						rows="6"
+						value={formData.schema}
 						onChange={handleChange}
 						required
+						className="w-full p-3 border border-gray-200 rounded outline-none focus:border-gray-400 resize-none"
 					/>
 				</div>
 
-				{[{ name: "title", label: "Title" }].map(({ name, label }) => (
-					<div key={name} className="flex flex-col gap-1">
-						<label className="font-medium text-sm text-gray-700">
-							{label} <span className="text-red-500">*</span>
-						</label>
-						<input
-							name={name}
-							value={formData[name]}
-							onChange={handleChange}
-							required
-							className="border border-gray-200 outline-none focus:border-gray-400 rounded p-3"
-							placeholder={label}
-						/>
-					</div>
-				))}
+				<div className="flex flex-col gap-1">
+					<label className="text-sm font-medium text-gray-700">Slug</label>
+					<input
+						name="slug"
+						value={formData.slug}
+						onChange={handleChange}
+						required
+						className={`p-3 border rounded outline-none ${
+							isSlugUsed ? "border-red-400" : "border-gray-200"
+						} focus:border-gray-400`}
+					/>
+				</div>
 
 				<div className="flex flex-col gap-1">
-					<label className="font-medium text-sm text-gray-700">
-						Description <span className="text-red-500">*</span>
-					</label>
+					<label className="text-sm font-medium text-gray-700">Title</label>
+					<input
+						name="title"
+						value={formData.title}
+						onChange={handleChange}
+						required
+						className="p-3 border border-gray-200 rounded outline-none focus:border-gray-400"
+					/>
+				</div>
+
+				<div className="flex flex-col gap-1">
+					<label className="text-sm font-medium text-gray-700">Description</label>
 					<TextEditor value={editorContent} onChange={setEditorContent} />
 				</div>
 
-				<button
-					type="submit"
-					className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded">
+				<button type="submit" className="bg-[#0d9488] text-white py-2 px-5 rounded font-medium">
 					Update
 				</button>
 			</form>
@@ -320,13 +295,7 @@ const PreviewBlock = ({ file, onRemove, existing = false }) => {
 	const src = existing ? file : URL.createObjectURL(file);
 	return (
 		<div className="relative w-full h-48">
-			<Image
-				src={src}
-				width={100}
-				height={100}
-				className="w-full h-full object-contain rounded border"
-				alt="Preview"
-			/>
+			<Image src={src} width={100} height={100} alt="Preview" className="w-full h-full object-contain rounded border" />
 			<button
 				type="button"
 				onClick={onRemove}

@@ -70,9 +70,9 @@ const Footer = ({ data }) => {
 								<h3 className="text-xl font-bold mb-4">
 									Washing Machine Repair in Qatar
 								</h3>
-								{data?.logo && (
+								{sData?.imgUrl && (
 									<Image
-										src={data?.logo}
+										src={sData?.imgUrl}
 										alt="Washing Machine Repair Logo"
 										width={150}
 										height={100}
@@ -82,9 +82,9 @@ const Footer = ({ data }) => {
 
 								<p className="text-gray-400 pe-2">{sData.description}</p>
 								<div className="flex mt-4 space-x-4">
-									{data?.facebook_url && (
+									{sData?.facebook && (
 										<a
-											href={`https://${data.facebook_url}`}
+											href={`https://${sData.facebook}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="text-gray-400 hover:text-white">
@@ -92,27 +92,27 @@ const Footer = ({ data }) => {
 										</a>
 									)}
 
-									{data?.instagram_link && (
+									{sData?.instagram && (
 										<a
-											href={`https://${data.instagram_link}`}
+											href={`https://${sData.instagram}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="text-gray-400 hover:text-white">
 											<FaInstagramSquare size={30} />
 										</a>
 									)}
-									{data?.twitter_link && (
+									{sData?.twitter && (
 										<a
-											href={`https://${data.twitter_link}`}
+											href={`https://${sData.twitter}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="text-gray-400 hover:text-white">
 											<FaSquareXTwitter size={30} />
 										</a>
 									)}
-									{data?.whats_app && (
+									{sData?.whatsapp && (
 										<a
-											href={`https://wa.me/${data.whats_app.replace(
+											href={`https://wa.me/${sData.whatsapp.replace(
 												/\D/g,
 												"",
 											)}`}
@@ -122,9 +122,9 @@ const Footer = ({ data }) => {
 											<FaWhatsappSquare size={30} />
 										</a>
 									)}
-									{data?.youtube_link && (
+									{sData?.youtube && (
 										<a
-											href={`https://${data.youtube_link}`}
+											href={`https://${sData.youtube}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="text-gray-400 hover:text-white">
@@ -146,28 +146,28 @@ const Footer = ({ data }) => {
 									</p>
 								)}
 
-								{data?.whats_app && (
+								{sData?.phone && (
 									<p className="text-gray-400 mt-2 flex items-center">
 										<strong className="me-1">
 											<PiPhoneCallFill className="size-5" />
 										</strong>
-										{data.whats_app}
+										{sData.phone}
 									</p>
 								)}
 
-								{data?.email && (
+								{sData?.email && (
 									<>
 										<p className="text-gray-400 hidden md:flex mt-2 text-nowrap line-clamp-1 items-center">
 											<strong className="me-1">
 												<MdEmail className="size-5" />{" "}
 											</strong>{" "}
-											{data.email}
+											{sData.email}
 										</p>
 										<p className="text-gray-400 md:hidden mt-2 line-clamp-1 flex items-center">
 											<strong className="me-1">
 												<MdEmail className="size-5" />{" "}
 											</strong>{" "}
-											{data.email}
+											{sData.email}
 										</p>
 									</>
 								)}
@@ -185,8 +185,8 @@ const Footer = ({ data }) => {
 							<div className="w-full">
 								<h3 className="text-xl font-bold mb-4">Our Services</h3>
 								<ul className="text-gray-400 list-disc list-inside space-y-2">
-									{sData.services?.map((service, idx) => (
-										<li key={idx}>{service}</li>
+									{sData.services?.slice().reverse().slice(0, 6).map((service, idx) => (
+										<li key={idx}><a href={service.link}>{service.title}</a></li>
 									))}
 								</ul>
 							</div>

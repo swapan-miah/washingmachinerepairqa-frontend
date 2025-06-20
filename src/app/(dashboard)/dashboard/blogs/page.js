@@ -82,7 +82,7 @@ export default function page() {
 				<table className="hidden min-w-full lg:table border border-gray-200">
 					<thead className="bg-[#0d9488] text-white">
 						<tr>
-							<th className="px-4 py-2 text-left text-sm font-semibold uppercase">
+							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[150px]">
 								Photo
 							</th>
 							<th className="px-4 py-2 text-left text-sm font-semibold uppercase w-[150px]">
@@ -108,7 +108,7 @@ export default function page() {
 									<div className="flex items-center">
 										{sData?.image && (
 											<Image
-												className="w-full h-16 object-cover rounded"
+												className="h-16 object-cover rounded w-[100px] max-w-[200px]"
 												width={150}
 												height={100}
 												src={sData.image}
@@ -135,22 +135,20 @@ export default function page() {
 									</span>
 								</td>
 								<td className="px-4 py-3 text-sm text-right">
-									<span className="relative inline-block py-1 font-semibold text-green-900 leading-tight">
-										<div className="w-full flex items-center justify-end gap-2">
-											<Link
-												href={`/dashboard/blogs/edit/${sData.slug}`}
-												onClick={() => setLoading(true)}>
-												<button className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
-													<MdModeEditOutline className="size-6" />
-												</button>
-											</Link>
-											<button
-												onClick={() => handleDelete(sData._id)}
-												className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
-												<MdDelete className="size-6" />
+									<div className="w-full flex items-center justify-end gap-2">
+										<Link
+											href={`/dashboard/blogs/edit/${sData.slug}`}
+											onClick={() => setLoading(true)}>
+											<button className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
+												<MdModeEditOutline className="size-6" />
 											</button>
-										</div>
-									</span>
+										</Link>
+										<button
+											onClick={() => handleDelete(sData._id)}
+											className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
+											<MdDelete className="size-6" />
+										</button>
+									</div>
 								</td>
 							</tr>
 						))}
@@ -163,20 +161,18 @@ export default function page() {
 							key={sData._id}
 							className="divide-y divide-gray-100 bg-white border border-gray-200 rounded-lg">
 							<div className="flex justify-between gap-3 px-3 py-4">
-								<div className="flex justify-start items-center gap-3 px-3 py-4">
-									<div className="flex items-center">
-										{sData?.image && (
-											<Image
-												className="w-20 h-14 object-cover rounded"
-												width={150}
-												height={100}
-												src={sData.image}
-												alt="Blogs"
-											/>
-										)}
-									</div>
+								<div className="flex items-center">
+									{sData?.image && (
+										<Image
+											className="w-20 h-14 object-cover rounded print:w-[250px] print:h-auto"
+											width={150}
+											height={100}
+											src={sData.image}
+											alt="Blogs"
+										/>
+									)}
 								</div>
-								<div className="flex items-center justify-end gap-3 px-3 py-4">
+								<div className="flex items-center justify-end gap-3">
 									<Link
 										href={`/dashboard/blogs/edit/${sData._id}`}
 										onClick={() => setLoading(true)}>
@@ -197,13 +193,11 @@ export default function page() {
 									Date:
 								</span>
 								<span className="text-md text-gray-900 line-clamp-1">
-									<p className="text-gray-900 whitespace-no-wrap line-clamp-2">
-										{new Date(sData.date).toLocaleDateString("en-US", {
-											year: "numeric",
-											month: "long",
-											day: "numeric",
-										})}
-									</p>
+									{new Date(sData.date).toLocaleDateString("en-US", {
+										year: "numeric",
+										month: "long",
+										day: "numeric",
+									})}
 								</span>
 							</div>
 

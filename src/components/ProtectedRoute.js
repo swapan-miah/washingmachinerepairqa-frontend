@@ -4,18 +4,16 @@ import { useRouter } from "next/navigation";
 import { useAccordion } from "@/app/context/ContextProvider";
 
 export default function ProtectedRoute({ children }) {
-	const { currentUser } = useAccordion();
-	const router = useRouter();
+  const { currentUser, loading } = useAccordion();
+  const router = useRouter();
 
-	useEffect(() => {
-		if (!currentUser) {
-			router.push("/login");
-		}
-	}, [currentUser, router]);
+  useEffect(() => {
+    if (!loading && !currentUser) {
+      router.push("/login");
+    }
+  }, [currentUser, loading, router]);
 
-	if (!currentUser) {
-		return null;
-	}
+  if (loading || !currentUser) return null;
 
-	return children;
+  return children;
 }

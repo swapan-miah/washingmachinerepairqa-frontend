@@ -85,7 +85,6 @@ export default function Page() {
 							key !== "_id" &&
 							key !== "images" &&
 							key !== "name" &&
-							key !== "schema" &&
 							key !== "title" &&
 							value ? (
 								<div

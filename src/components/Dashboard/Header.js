@@ -4,7 +4,7 @@ import Image from "next/image";
 import { MdMenuOpen } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAccordion } from "@/app/context/ContextProvider";
 
@@ -13,6 +13,7 @@ export default function Header({ data }) {
 	const { sideBar, setSideBar, currentUser, logout } = useAccordion();
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
+	const menuRef = useRef(null);
 
 	const handleLogout = async () => {
 		setLoading(true);
@@ -26,6 +27,24 @@ export default function Header({ data }) {
 			console.error("Logout failed:", error);
 		}
 	};
+
+	useEffect(() => {
+		function handleClickOutside(event) {
+			if (menuRef.current && !menuRef.current.contains(event.target)) {
+				setMenu(false);
+			}
+		}
+
+		if (menu) {
+			document.addEventListener("mousedown", handleClickOutside);
+		} else {
+			document.removeEventListener("mousedown", handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [menu]);
 
 	return (
 		<div className="sticky top-0 z-50 w-full bg-white border-b h-[66px] px-5 grid grid-cols-3 items-center">
@@ -60,7 +79,10 @@ export default function Header({ data }) {
 			</div>
 
 			{menu && (
-				<div className="z-50 logout-menu absolute top-[56px] right-5 bg-white border border-gray-200 rounded shadow">
+				<div
+					ref={menuRef}
+					className="z-50 logout-menu absolute top-[56px] right-5 bg-white border border-gray-200 rounded shadow"
+				>
 					<ul className="p-5 w-[300px] space-y-2">
 						<Link href="/">
 							<li className="p-2 bg-gray-50 border border-gray-50 hover:border-gray-200 cursor-pointer rounded">
@@ -69,7 +91,8 @@ export default function Header({ data }) {
 						</Link>
 						<li
 							onClick={handleLogout}
-							className="p-2 text-white bg-[#0d9488] active:bg-[#0d9470] border border-[#0d9488] hover:border-[#0d9488] cursor-pointer rounded flex items-center justify-center gap-1">
+							className="p-2 text-white bg-[#0d9488] active:bg-[#0d9470] border border-[#0d9488] hover:border-[#0d9488] cursor-pointer rounded flex items-center justify-center gap-1"
+						>
 							<HiOutlineLogout /> LogOut
 						</li>
 					</ul>

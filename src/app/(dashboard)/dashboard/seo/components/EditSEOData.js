@@ -3,27 +3,11 @@ import Loading from "@/components/Loading";
 import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { FaPlus, FaMinus } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
 export default function EditSEOData({ pageName, data }) {
 	const [loading, setLoading] = useState(false);
-	const [schemaItems, setSchemaItems] = useState(
-		pageName === "home" && Array.isArray(data?.schema)
-			? data.schema
-			: []
-	);
 	const router = useRouter();
-
-	const handleAddItem = () => {
-		setSchemaItems([...schemaItems, { question: "", answer: "" }]);
-	};
-
-	const handleRemoveItem = (index) => {
-		const updatedItems = [...schemaItems];
-		updatedItems.splice(index, 1);
-		setSchemaItems(updatedItems);
-	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -34,11 +18,22 @@ export default function EditSEOData({ pageName, data }) {
 		const description = form.get("description");
 		const keywords = form.get("keywords");
 		const robots = form.get("robots");
+		const schema = form.get("schema");
 
-		const schemaData = schemaItems.map((_, index) => ({
-			question: form.get(`question_${index}`),
-			answer: form.get(`answer_${index}`),
-		}));
+		let cleanSchema = schema.trim();
+		if (cleanSchema.startsWith("<script")) {
+			const matched = cleanSchema.match(/<script[^>]*>([\s\S]*?)<\/script>/);
+			if (matched && matched[1]) {
+				cleanSchema = matched[1].trim();
+			}
+		}
+		try {
+			JSON.parse(cleanSchema);
+		} catch (err) {
+			toast.error("Invalid JSON in Schema field.");
+			setLoading(false);
+			return;
+		}
 
 		const updateData = {
 			name: pageName,
@@ -46,14 +41,14 @@ export default function EditSEOData({ pageName, data }) {
 			description,
 			keywords,
 			robots,
+			schema : cleanSchema,
 		};
 
-		if (pageName === "home") {
-			updateData.schema = schemaData;
-		}
-
 		try {
-			await axios.put(`${process.env.BASE_URL}/seo/edit/${pageName}`, updateData);
+			await axios.put(
+				`${process.env.BASE_URL}/seo/edit/${pageName}`,
+				updateData,
+			);
 			toast.success("Updated Successfully!");
 		} catch (err) {
 			toast.error("Failed to update");
@@ -63,7 +58,6 @@ export default function EditSEOData({ pageName, data }) {
 		}
 	};
 
-
 	if (loading) return <Loading />;
 
 	return (
@@ -71,7 +65,6 @@ export default function EditSEOData({ pageName, data }) {
 			<form
 				onSubmit={handleSubmit}
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
-				
 				<div className="flex flex-col gap-1">
 					<label className="font-medium text-sm text-gray-700">
 						Meta Title <span className="text-red-500">*</span>
@@ -138,69 +131,21 @@ export default function EditSEOData({ pageName, data }) {
 					</div>
 				</div>
 
-				{pageName === "home" && (
-					<div className="flex flex-col gap-4">
-						{schemaItems.map((item, index) => (
-							<div
-								key={index}
-								className="border p-4 rounded flex flex-col gap-3 bg-white">
-								<div className="flex items-center justify-between mb-2">
-									<h2 className="font-medium flex items-center gap-3 text-md">
-										<button className="bg-[#0d9488] h-[32px] w-[60px] rounded grid place-items-center text-white">
-											{String(index + 1).padStart(2, "0")}
-										</button>
-										Schema
-									</h2>
-									<div>
-										{index === schemaItems.length - 1 ? (
-											<button
-												type="button"
-												onClick={handleAddItem}
-												className="bg-[#0d9488] h-[32px] w-[32px] rounded grid place-items-center text-white">
-												<FaPlus />
-											</button>
-										) : (
-											<button
-												type="button"
-												onClick={() => handleRemoveItem(index)}
-												className="bg-[#e7405c] h-[32px] w-[32px] rounded grid place-items-center text-white">
-												<FaMinus />
-											</button>
-										)}
-									</div>
-								</div>
-
-								<div className="flex flex-col gap-1">
-									<label className="font-medium text-sm text-gray-700">
-										Question <span className="text-red-500">*</span>
-									</label>
-									<input
-										type="text"
-										name={`question_${index}`}
-										placeholder="Question"
-										defaultValue={item.question}
-										className="border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
-										required
-									/>
-								</div>
-
-								<div className="flex flex-col gap-1 mt-3">
-									<label className="font-medium text-sm text-gray-700">
-										Answer <span className="text-red-500">*</span>
-									</label>
-									<textarea
-										name={`answer_${index}`}
-										rows="4"
-										className="resize-none border border-gray-200 outline-none focus:border-gray-400 rounded p-2"
-										placeholder="Answer"
-										defaultValue={item.answer}
-										required
-									/>
-								</div>
-							</div>
-						))}
+				{[{ name: "schema", label: "Schema" }].map(({ name, label }) => (
+					<div key={name} className="flex flex-col gap-1">
+						<label className="font-medium text-sm text-gray-700">
+							{label} <span className="text-red-500">*</span>
+						</label>
+						<textarea
+							name={name}
+							rows="6"
+							placeholder={label}
+							defaultValue={data?.schema || ""}
+							className="w-full p-3 border border-gray-200 rounded focus:outline-none focus:border-gray-400 resize-none"
+							required
+						/>
 					</div>
-				)}
+				))}
 
 				<button
 					type="submit"
