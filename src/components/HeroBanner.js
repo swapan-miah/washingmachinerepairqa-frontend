@@ -42,11 +42,9 @@ export default function HeroBanner() {
 		return () => clearInterval(interval);
 	}, [data.length]);
 
-	if (loading) return <Loading />;
-
 
 	return (
-		<div className="relative h-screen max-h-[800px] overflow-hidden text-white">
+		<div className="relative h-[380px] md:h-[450px] lg:h-screen lg:max-h-[800px] overflow-hidden text-white">
 			{data.map((slide, index) => (
 				<div
 					key={index}
