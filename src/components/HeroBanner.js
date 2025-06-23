@@ -5,7 +5,6 @@ import CallNowButton_copy from "./CallNowButton_copy";
 import axios from "axios";
 import { BiRightArrowAlt } from "react-icons/bi";
 import Link from "next/link";
-import Loading from "./Loading";
 
 export default function HeroBanner() {
 	const [current, setCurrent] = useState(0);
@@ -44,7 +43,7 @@ export default function HeroBanner() {
 
 
 	return (
-		<div className="relative h-[380px] md:h-[450px] lg:h-screen lg:max-h-[800px] overflow-hidden text-white">
+		<div className="relative h-screen max-h-[800px] overflow-hidden text-white">
 			{data.map((slide, index) => (
 				<div
 					key={index}
