@@ -92,8 +92,8 @@ export default function Navbar({ data }) {
 					<ul
 						className={`absolute md:static top-20 shadow-[0px_1px_0px_rgba(17,17,26,0.1)] md:shadow-none left-0 w-full bg-white border-t md:border-none py-3 transition-all duration-300 ${
 							menuOpen
-								? "opacity-100 scale-100"
-								: "opacity-0 scale-95 md:opacity-100 md:scale-100"
+								? "opacity-100 scale-100 pointer-events-none"
+								: "opacity-0 scale-95 md:opacity-100 md:scale-100 pointer-events-auto"
 						} md:flex md:items-center md:gap-6 md:ml-auto`}>
 						<li className="text-center md:text-left md:ms-auto py-4 md:py-0">
 							<Link
