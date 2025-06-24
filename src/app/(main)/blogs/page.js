@@ -1,6 +1,7 @@
 import Blogs from "@/components/Blogs";
 import BlogsData from "../../../../lib/BlogsData";
 import SchemaScript from "@/components/SchemaScript";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata() {
 	const data = await BlogsData();
@@ -25,6 +26,7 @@ export default async function page() {
 		<>
 			{data?.schema && <SchemaScript schema={data.schema} id="blogs" />}
 			<Blogs showAll={true}/>
+			<LiveDataListener eventName="seo-updated"/>
 		</>
 	);
 }

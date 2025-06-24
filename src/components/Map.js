@@ -1,14 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 const Map = () => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchPosts = async () => {
+	const fetchPosts = async () => {
 		try {
 			const res = await axios.get(`${process.env.BASE_URL}/google-maps`);
 			setData(res.data);
@@ -17,12 +19,18 @@ const Map = () => {
 		} finally {
 			setLoading(false);
 		}
-		};
+	};
 
+	useEffect(() => {
 		fetchPosts();
+
+		socket.on("accordion-updated", fetchPosts);
+
+		return () => {
+			socket.off("accordion-updated", fetchPosts);
+		};
 	}, []);
 
-	
 	if (loading) {
 		return (
 			<div className="mx-4 my-4 space-y-6">
@@ -36,8 +44,7 @@ const Map = () => {
 	return (
 		<div className="bg-white">
 			<div className="mx-4 my-4">
-				<div
-					className="map-container rounded overflow-hidden h-[150px] md:h-[400px] w-full">
+				<div className="map-container rounded overflow-hidden h-[150px] md:h-[400px] w-full">
 					<iframe
 						src={data.mapUrl}
 						width="100%"

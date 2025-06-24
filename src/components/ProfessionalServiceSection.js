@@ -4,6 +4,10 @@ import Aos from "./Aos";
 import Image from "next/image";
 import InlineSVG from "./InlineSVG";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 const ProfessionalServiceSection = () => {
 	const [data, setData] = useState([]);
@@ -11,12 +15,11 @@ const ProfessionalServiceSection = () => {
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
 
-	useEffect(() => {
-		const fetchData = async () => {
+	const fetchData = async () => {
 		try {
 			const [secResponse, solutionResponse] = await Promise.all([
-			axios.get(`${process.env.BASE_URL}/section-heading/expert-solutions`),
-			axios.get(`${process.env.BASE_URL}/our-solutions`),
+				axios.get(`${process.env.BASE_URL}/section-heading/expert-solutions`),
+				axios.get(`${process.env.BASE_URL}/our-solutions`),
 			]);
 
 			setSecData(secResponse.data);
@@ -26,41 +29,52 @@ const ProfessionalServiceSection = () => {
 		} finally {
 			setLoading(false);
 		}
-		};
+	};
 
+	useEffect(() => {
 		fetchData();
+
+		socket.on("solution-updated", fetchData);
+		socket.on("solution-posted", fetchData);
+		socket.on("solution-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("solution-updated", fetchData);
+			socket.off("solution-posted", fetchData);
+			socket.off("solution-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	if (loading) {
-  return (
-	<section className="py-14 bg-gray-50 overflow-x-hidden border-t border-gray-200">
-		<div className="text-center mb-16">
-				<h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-8 page-title">
-					<span className="relative">Expert Solutions</span>
-				</h2>
-				<p className="text-gray-600 mt-4 leading-relaxed max-w-4xl mx-auto text-sm sm:text-base">
-					Washing machines are essential household appliances that simplify our
-					lives by saving time and effort in doing laundry. However, like any
-					other mechanical device, they may sometimes encounter problems.
-				</p>
-			</div>
-			<div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div
-          key={index}
-          className="animate-pulse text-center bg-white p-6 rounded-lg border border-gray-200"
-        >
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-full" />
-          <div className="h-5 w-3/4 bg-gray-300 rounded mx-auto mb-2" />
-          <div className="h-4 w-[90%] bg-gray-300 rounded mx-auto mb-1" />
-          <div className="h-4 w-[80%] bg-gray-300 rounded mx-auto" />
-        </div>
-      ))}
-    </div>
-	</section>
-    
-  );
-}
+		return (
+			<section className="py-14 bg-gray-50 overflow-x-hidden border-t border-gray-200">
+				<div className="text-center mb-16">
+					<h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-8 page-title">
+						<span className="relative">Expert Solutions</span>
+					</h2>
+					<p className="text-gray-600 mt-4 leading-relaxed max-w-4xl mx-auto text-sm sm:text-base">
+						Washing machines are essential household appliances that simplify
+						our lives by saving time and effort in doing laundry. However, like
+						any other mechanical device, they may sometimes encounter problems.
+					</p>
+				</div>
+				<div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+					{Array.from({ length: 6 }).map((_, index) => (
+						<div
+							key={index}
+							className="animate-pulse text-center bg-white p-6 rounded-lg border border-gray-200">
+							<div className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-full" />
+							<div className="h-5 w-3/4 bg-gray-300 rounded mx-auto mb-2" />
+							<div className="h-4 w-[90%] bg-gray-300 rounded mx-auto mb-1" />
+							<div className="h-4 w-[80%] bg-gray-300 rounded mx-auto" />
+						</div>
+					))}
+				</div>
+			</section>
+		);
+	}
 
 	return (
 		<section className="py-14 bg-gray-50 overflow-x-hidden border-t border-gray-200">

@@ -14,6 +14,11 @@ import {
 import { FaAnglesRight } from "react-icons/fa6";
 import { BiRightArrowAlt } from "react-icons/bi";
 
+import { io } from "socket.io-client";
+
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
+
 const WhatWeDo = () => {
 	const [data, setData] = useState([]);
 	const [secData, setSecData] = useState([]);
@@ -28,8 +33,7 @@ const WhatWeDo = () => {
 		return firstElement?.textContent?.trim() || "";
 	};
 
-	useEffect(() => {
-		const fetchData = async () => {
+	const fetchData = async () => {
 			try {
 				const [secResponse, skillsResponse] = await Promise.all([
 					axios.get(`${process.env.BASE_URL}/section-heading/services-skills`),
@@ -45,7 +49,20 @@ const WhatWeDo = () => {
 			}
 		};
 
+	useEffect(() => {
 		fetchData();
+
+		socket.on("skills-updated", fetchData);
+		socket.on("skills-posted", fetchData);
+		socket.on("skills-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("skills-updated", fetchData);
+			socket.off("skills-posted", fetchData);
+			socket.off("skills-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	if (loading) {

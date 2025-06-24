@@ -2,6 +2,7 @@ import Contact from "@/components/Contact";
 import Map from "@/components/Map";
 import ContactData from "../../../../lib/ContactData";
 import SchemaScript from "@/components/SchemaScript";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata() {
 	const data = await ContactData();
@@ -26,6 +27,7 @@ export default async function page() {
 			{data?.schema && <SchemaScript schema={data.schema} id="contact" />}
 			<Contact />
 			<Map />
+			<LiveDataListener eventName="seo-updated"/>
 		</>
 	);
 }

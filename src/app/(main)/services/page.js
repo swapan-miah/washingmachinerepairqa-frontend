@@ -4,6 +4,7 @@ import WhyChooseUs from "@/components/WhyChooseUs";
 import React from "react";
 import ServicesData from "../../../../lib/ServicesData";
 import SchemaScript from "@/components/SchemaScript";
+import LiveDataListener from "@/components/LiveDataListener";
 
 
 export async function generateMetadata() {
@@ -31,6 +32,7 @@ const page = async () => {
 			<WhatWeDo></WhatWeDo>
 			<WashingMachineRepair></WashingMachineRepair>
 			<WhyChooseUs></WhyChooseUs>
+			<LiveDataListener eventName="seo-updated"/>
 		</>
 	);
 };

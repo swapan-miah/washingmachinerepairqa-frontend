@@ -5,7 +5,9 @@ import CallNowButton_copy from "./CallNowButton_copy";
 import axios from "axios";
 import { BiRightArrowAlt } from "react-icons/bi";
 import Link from "next/link";
-import Loading from "./Loading";
+import { io } from "socket.io-client";
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 export default function HeroBanner() {
 	const [current, setCurrent] = useState(0);
@@ -26,6 +28,12 @@ export default function HeroBanner() {
 
 	useEffect(() => {
 		fetchData();
+
+		socket.on("hero-updated", fetchData);
+
+		return () => {
+			socket.off("hero-updated", fetchData);
+		};
 	}, []);
 
 	const nextSlide = () => setCurrent((prev) => (prev + 1) % data.length);
@@ -41,9 +49,6 @@ export default function HeroBanner() {
 
 		return () => clearInterval(interval);
 	}, [data.length]);
-
-	if (loading) return <Loading />;
-
 
 	return (
 		<div className="relative h-screen max-h-[800px] overflow-hidden text-white">

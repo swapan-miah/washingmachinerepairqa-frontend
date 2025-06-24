@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 export default function Accordion() {
 	const [data, setData] = useState([]);
@@ -9,7 +13,6 @@ export default function Accordion() {
 	const [secData, setSecData] = useState([]);
 	const [error, setError] = useState(null);
 
-	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const [secResponse, accordionResponse] = await Promise.all([
@@ -19,7 +22,7 @@ export default function Accordion() {
 
 				setSecData(secResponse.data);
 				setData(accordionResponse.data);
-				setOpenIndex(accordionResponse.data.length - 1); // Open first visible accordion (after reverse)
+				setOpenIndex(accordionResponse.data.length - 1);
 			} catch (err) {
 				setError(err.message || "Failed to fetch data");
 			} finally {
@@ -27,7 +30,20 @@ export default function Accordion() {
 			}
 		};
 
+	useEffect(() => {
 		fetchData();
+
+		socket.on("accordion-updated", fetchData);
+		socket.on("accordion-posted", fetchData);
+		socket.on("accordion-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("accordion-updated", fetchData);
+			socket.off("accordion-posted", fetchData);
+			socket.off("accordion-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	const toggleFAQ = (index) => {

@@ -6,6 +6,10 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import "swiper/css";
 import "swiper/css/navigation";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 const CustomerTestimonials = () => {
 	const prevRef = useRef(null);
@@ -16,7 +20,6 @@ const CustomerTestimonials = () => {
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
 
-	useEffect(() => {
 		const fetchData = async () => {
 		try {
 			const [secResponse, feedbackResponse] = await Promise.all([
@@ -33,7 +36,20 @@ const CustomerTestimonials = () => {
 		}
 		};
 
+	useEffect(() => {
 		fetchData();
+
+		socket.on("feedback-updated", fetchData);
+		socket.on("feedback-posted", fetchData);
+		socket.on("feedback-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("feedback-updated", fetchData);
+			socket.off("feedback-posted", fetchData);
+			socket.off("feedback-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	if (loading) {

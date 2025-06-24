@@ -33,8 +33,6 @@ export default function EditFooter({ data }) {
 		Array.isArray(data?.services) ? data.services : [],
 	);
 
-	/* const [services, setServices] = useState(data.services || [""]); */
-
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
@@ -51,22 +49,6 @@ export default function EditFooter({ data }) {
 		setImage(null);
 		setImageRemoved(true);
 	};
-
-	/* const handleServiceChange = (index, value) => {
-		const newServices = [...services];
-		newServices[index] = value;
-		setServices(newServices);
-	}; */
-
-	/* const handleAddService = () => {
-		setServices([...services, ""]);
-	}; */
-
-	/* const handleRemoveService = (index) => {
-		const newServices = [...services];
-		newServices.splice(index, 1);
-		setServices(newServices);
-	}; */
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();

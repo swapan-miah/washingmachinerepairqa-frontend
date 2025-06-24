@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 const WhyChooseUs = () => {
 	const [data, setData] = useState(null);
@@ -9,24 +12,32 @@ const WhyChooseUs = () => {
 	const [secData, setSecData] = useState([]);
 	const [error, setError] = useState(null);
 
+	const fetchData = async () => {
+		try {
+			const [secResponse, chooseResponse] = await Promise.all([
+				axios.get(`${process.env.BASE_URL}/section-heading/why-choose-us`),
+				axios.get(`${process.env.BASE_URL}/why-choose`),
+			]);
+
+			setSecData(secResponse.data);
+			setData(chooseResponse.data);
+		} catch (err) {
+			setError(err.message || "Failed to fetch data");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const [secResponse, chooseResponse] = await Promise.all([
-					axios.get(`${process.env.BASE_URL}/section-heading/why-choose-us`),
-					axios.get(`${process.env.BASE_URL}/why-choose`),
-				]);
-
-				setSecData(secResponse.data);
-				setData(chooseResponse.data);
-			} catch (err) {
-				setError(err.message || "Failed to fetch data");
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchData();
+
+		socket.on("whychoose-updated", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("whychoose-updated", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	if (loading) {

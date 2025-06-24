@@ -1,5 +1,6 @@
 import BlogDetails from "@/components/BlogDetails";
 import axios from "axios";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata({ params }) {
 	const { id } = params;
@@ -30,5 +31,10 @@ export async function generateMetadata({ params }) {
 }
 
 export default function Page({ params }) {
-	return <BlogDetails params={params} />;
+	return (
+		<>
+			<BlogDetails params={params} />
+			<LiveDataListener eventName="blog-updated" />
+		</>
+	);
 }

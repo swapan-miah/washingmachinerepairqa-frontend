@@ -15,6 +15,7 @@ import axios from "axios";
 import emailjs from "emailjs-com";
 import Loading from "./Loading";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { io } from "socket.io-client";
 
 function Modal({ show, onClose, title, message, isError }) {
 	if (!show) return null;
@@ -50,6 +51,8 @@ function Modal({ show, onClose, title, message, isError }) {
 	);
 }
 
+const socket = io(process.env.BASE_URL, { autoConnect: true });
+
 export default function Contact() {
 	const [data, setData] = useState([]);
 	const [secData, setSecData] = useState([]);
@@ -72,21 +75,30 @@ export default function Contact() {
 		setModalData({ show: false, title: "", message: "", isError: false });
 	};
 
+	const fetchData = async () => {
+		try {
+			const [secRes, contactRes] = await Promise.all([
+				axios.get(`${process.env.BASE_URL}/section-heading/contact`),
+				axios.get(`${process.env.BASE_URL}/footer-content`),
+			]);
+			setData(contactRes.data);
+			setSecData(secRes.data);
+		} catch {
+		} finally {
+			setLoadingMain(false);
+		}
+	};
+
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const [secRes, contactRes] = await Promise.all([
-					axios.get(`${process.env.BASE_URL}/section-heading/contact`),
-					axios.get(`${process.env.BASE_URL}/footer-content`),
-				]);
-				setData(contactRes.data);
-				setSecData(secRes.data)
-			} catch {
-			} finally {
-				setLoadingMain(false);
-			}
-		};
 		fetchData();
+
+		socket.on("footer-updated", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("footer-updated", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	const handleChange = (e) => {
@@ -160,7 +172,7 @@ export default function Contact() {
 					key={sData._id}
 					className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
 					<div className="space-y-6">
-						{sData.whatsapp && (
+						{sData.phone && (
 							<div className="flex items-center border rounded p-5">
 								<div className="text-white bg-blue-600 p-3 rounded-full">
 									<FaPhoneAlt size={20} />
@@ -168,7 +180,7 @@ export default function Contact() {
 								<div className="ml-4">
 									<p className="text-sm text-gray-500">Mobile</p>
 									<p className="text-lg font-medium text-gray-800">
-										{sData.whatsapp}
+										{sData.phone}
 									</p>
 								</div>
 							</div>

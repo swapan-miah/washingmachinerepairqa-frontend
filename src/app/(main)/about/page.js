@@ -5,34 +5,36 @@ import Map from "@/components/Map";
 import OurTeam from "@/components/OurTeam";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import SchemaScript from "@/components/SchemaScript";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata() {
-  const data = await AboutData();
+	const data = await AboutData();
 
-  return {
-    title: data?.title,
-    description: data?.description,
-    keywords: data?.keywords || "",
-    robots: data?.index === "index" ? "index, follow" : "noindex, nofollow",
-    openGraph: {
-      title: data?.title,
-      description: data?.description,
-    },
-  };
+	return {
+		title: data?.title,
+		description: data?.description,
+		keywords: data?.keywords || "",
+		robots: data?.index === "index" ? "index, follow" : "noindex, nofollow",
+		openGraph: {
+			title: data?.title,
+			description: data?.description,
+		},
+	};
 }
 
 const Page = async () => {
-  const data = await AboutData();
+	const data = await AboutData();
 
-  return (
-    <>
-      {data?.schema && <SchemaScript schema={data.schema} id="about" />}
-      <OurTeam />
-      <WhyChooseUs />
-      <Contact />
-      <Map />
-    </>
-  );
+	return (
+		<>
+			{data?.schema && <SchemaScript schema={data.schema} id="about" />}
+			<OurTeam />
+			<WhyChooseUs />
+			<Contact />
+			<Map />
+			<LiveDataListener eventName="seo-updated"/>
+		</>
+	);
 };
 
 export default Page;

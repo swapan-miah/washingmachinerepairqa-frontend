@@ -3,26 +3,32 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Aos from "./Aos";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
+
 
 const OurTeam = () => {
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const res = await axios.get(`${process.env.BASE_URL}/about`);
-				setData(res.data);
-			} catch (error) {
-				setError(error.message || "Failed to fetch data");
-			} finally {
-				setLoading(false);
-			}
-		};
+	const fetchData = async () => {
+		try {
+			const res = await axios.get(`${process.env.BASE_URL}/about`);
+			setData(res.data);
+		} catch (error) {
+			setError(error.message || "Failed to fetch data");
+		} finally {
+			setLoading(false);
+		}
+	};
 
+	useEffect(() => {
 		fetchData();
-	}, []);
+		socket.on("about-updated", fetchData);
+		return () => socket.off("about-updated", fetchData);
+	}, [fetchData]);
 
 	if (loading) {
 		return (

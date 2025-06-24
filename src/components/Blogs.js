@@ -9,8 +9,9 @@ import { BiRightArrowAlt } from "react-icons/bi";
 import Aos from "./Aos";
 import { FaHome } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
+import { io } from "socket.io-client";
 
-
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 export default function Blogs({ showAll = false }) {
 	const [blogs, setBlogs] = useState([]);
@@ -19,24 +20,37 @@ export default function Blogs({ showAll = false }) {
 	const [error, setError] = useState(null);
 	const [formattedDates, setFormattedDates] = useState({});
 
+	const fetchData = async () => {
+		try {
+			const [secResponse, blogsResponse] = await Promise.all([
+				axios.get(`${process.env.BASE_URL}/section-heading/blogs`),
+				axios.get(`${process.env.BASE_URL}/our-blogs`),
+			]);
+
+			setSecData(secResponse.data);
+			setBlogs(blogsResponse.data.reverse());
+			j;
+		} catch (err) {
+			setError(err.message || "Failed to fetch data");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const [secResponse, blogsResponse] = await Promise.all([
-					axios.get(`${process.env.BASE_URL}/section-heading/blogs`),
-					axios.get(`${process.env.BASE_URL}/our-blogs`),
-				]);
-
-				setSecData(secResponse.data);
-				setBlogs(blogsResponse.data);
-			} catch (err) {
-				setError(err.message || "Failed to fetch data");
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchData();
+
+		socket.on("blog-updated", fetchData);
+		socket.on("blog-posted", fetchData);
+		socket.on("blog-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("blog-updated", fetchData);
+			socket.off("blog-posted", fetchData);
+			socket.off("blog-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	useEffect(() => {

@@ -1,10 +1,13 @@
 import ServiceDetails from "@/components/ServicesDetails";
 import axios from "axios";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata({ params }) {
 	const { id } = params;
 	try {
-		const { data: services } = await axios.get(`${process.env.BASE_URL}/services-skills`);
+		const { data: services } = await axios.get(
+			`${process.env.BASE_URL}/services-skills`,
+		);
 		const currentService = services.find((item) => item.slug === id);
 		if (!currentService) {
 			return { title: "Service Not Found" };
@@ -13,7 +16,10 @@ export async function generateMetadata({ params }) {
 			title: currentService?.metaTitle,
 			description: currentService?.metaDescription,
 			keywords: currentService?.metaKeywords || "",
-			robots: currentService?.robotMeta === "index" ? "index, follow" : "noindex, nofollow",
+			robots:
+				currentService?.robotMeta === "index"
+					? "index, follow"
+					: "noindex, nofollow",
 			openGraph: {
 				title: currentService?.metaTitle,
 				description: currentService?.metaDescription,
@@ -25,5 +31,11 @@ export async function generateMetadata({ params }) {
 }
 
 export default function Page({ params }) {
-	return <ServiceDetails params={params} />;
+	return(
+		<>
+		<ServiceDetails params={params} />
+		<LiveDataListener eventName="skills-updated" />
+	</>
+	);
+	
 }

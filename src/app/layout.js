@@ -4,6 +4,7 @@ import "./globals.css";
 import { DataProvider } from "./context/ContextProvider";
 import SettingsData from "../../lib/SettingsData";
 
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],

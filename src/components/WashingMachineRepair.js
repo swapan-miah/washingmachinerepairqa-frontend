@@ -2,6 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { PiPhoneCallFill } from "react-icons/pi";
 import axios from "axios";
+import { io } from "socket.io-client";
+
+
+const socket = io(process.env.BASE_URL, { autoConnect: true });
 
 export default function WashingMachineRepair() {
 	const [data, setData] = useState([]);
@@ -9,8 +13,7 @@ export default function WashingMachineRepair() {
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
 
-	useEffect(() => {
-		const fetchData = async () => {
+	const fetchData = async () => {
 			try {
 				const [secResponse, serviceResponse] = await Promise.all([
 					axios.get(`${process.env.BASE_URL}/section-heading/best-service`),
@@ -26,7 +29,20 @@ export default function WashingMachineRepair() {
 			}
 		};
 
+	useEffect(() => {
 		fetchData();
+
+		socket.on("service-updated", fetchData);
+		socket.on("service-posted", fetchData);
+		socket.on("service-deleted", fetchData);
+		socket.on("sectionheading-updated", fetchData);
+
+		return () => {
+			socket.off("service-updated", fetchData);
+			socket.off("service-posted", fetchData);
+			socket.off("service-deleted", fetchData);
+			socket.off("sectionheading-updated", fetchData);
+		};
 	}, []);
 
 	if (loading) {

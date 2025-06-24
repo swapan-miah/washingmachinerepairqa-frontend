@@ -12,6 +12,7 @@ import GoogleTagManager from "@/components/GoogleTagManager";
 import HomeData from "../../../lib/HomeData";
 import SettingsData from "../../../lib/SettingsData";
 import SchemaScript from "@/components/SchemaScript";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export async function generateMetadata() {
 	const data = await HomeData();
@@ -47,6 +48,7 @@ export default async function Home() {
 				<Accordion />
 				<Map />
 			</main>
+			<LiveDataListener eventName="seo-updated"/>
 		</>
 	);
 }

@@ -4,6 +4,7 @@ import WhatsApp from "@/components/WhatsApp";
 import MobileActions from "@/components/MobileActions";
 import ClearLocalStorageOnReload from "@/components/ClearLocalStorageOnReload";
 import SettingsData from "../../../lib/SettingsData";
+import LiveDataListener from "@/components/LiveDataListener";
 
 export default async function RootLayout({ children }) {
 	const data = await SettingsData();
@@ -18,6 +19,7 @@ export default async function RootLayout({ children }) {
 				<WhatsApp data={data} />
 				<MobileActions data={data} />
 				<ClearLocalStorageOnReload />
+				<LiveDataListener eventName="settings-updated" />
 			</body>
 		</html>
 	);
