@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
-import { notFound } from "next/navigation";
 
 async function getFileUrl(filename) {
-	if (!filename.endsWith(".html")) return notFound();
+	if (!filename.endsWith(".html")) return null;
 
 	const res = await axios.get(`${process.env.BASE_URL}/seo-files`, {
 		headers: { "Cache-Control": "no-store" },
