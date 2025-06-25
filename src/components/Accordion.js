@@ -2,8 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 export default function Accordion() {
 	const [data, setData] = useState([]);
@@ -11,6 +10,8 @@ export default function Accordion() {
 	const [openIndex, setOpenIndex] = useState(null);
 	const [secData, setSecData] = useState([]);
 	const [error, setError] = useState(null);
+
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -32,6 +33,7 @@ export default function Accordion() {
 	useEffect(() => {
 		fetchData();
 
+		if (!socket.connected) socket.connect();
 		socket.on("accordion-updated", fetchData);
 		socket.on("accordion-posted", fetchData);
 		socket.on("accordion-deleted", fetchData);
