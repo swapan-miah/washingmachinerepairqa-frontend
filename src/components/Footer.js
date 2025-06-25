@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import axios from "axios";
-import { io } from "socket.io-client";
 import {
 	FaInstagramSquare,
 	FaFacebookSquare,
@@ -15,14 +14,15 @@ import {
 	IoLocationSharp,
 	FaSquareXTwitter,
 } from "./Icons/Icons";
+import { getSocket } from "../../lib/socket";
 
 const FooterBottom = dynamic(() => import("./FooterBottom"), { ssr: false });
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const Footer = ({ data }) => {
 	const [footerData, setFooterData] = useState([]);
 	const [loading, setLoading] = useState(true);
+
+	const socket = getSocket();
 
 	const fetchData = useCallback(async () => {
 		try {
@@ -39,6 +39,7 @@ const Footer = ({ data }) => {
 
 	useEffect(() => {
 		fetchData();
+		if (!socket.connected) socket.connect();
 		socket.on("footer-updated", fetchData);
 		return () => socket.off("footer-updated", fetchData);
 	}, [fetchData]);

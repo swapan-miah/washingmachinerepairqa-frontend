@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const Map = () => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+
+	const socket = getSocket();
 
 	const fetchPosts = async () => {
 		try {
@@ -25,6 +25,7 @@ const Map = () => {
 
 	useEffect(() => {
 		fetchPosts();
+		if (!socket.connected) socket.connect();
 
 		socket.on("accordion-updated", fetchPosts);
 

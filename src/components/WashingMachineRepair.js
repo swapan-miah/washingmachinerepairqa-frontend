@@ -2,16 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { PiPhoneCallFill } from "react-icons/pi";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 export default function WashingMachineRepair() {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
-
+    const socket = getSocket();
 	const fetchData = async () => {
 		try {
 			const [secResponse, serviceResponse] = await Promise.all([
@@ -32,7 +30,7 @@ export default function WashingMachineRepair() {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("service-updated", fetchData);
 		socket.on("service-posted", fetchData);
 		socket.on("service-deleted", fetchData);

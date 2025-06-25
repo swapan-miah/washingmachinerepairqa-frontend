@@ -2,15 +2,15 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const WhyChooseUs = () => {
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [secData, setSecData] = useState([]);
 	const [error, setError] = useState(null);
+
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -32,7 +32,7 @@ const WhyChooseUs = () => {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("whychoose-updated", fetchData);
 		socket.on("sectionheading-updated", fetchData);
 

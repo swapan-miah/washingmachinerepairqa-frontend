@@ -15,7 +15,7 @@ import axios from "axios";
 import emailjs from "emailjs-com";
 import Loading from "./Loading";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { io } from "socket.io-client";
+import { getSocket } from "../../lib/socket";
 
 function Modal({ show, onClose, title, message, isError }) {
 	if (!show) return null;
@@ -51,8 +51,6 @@ function Modal({ show, onClose, title, message, isError }) {
 	);
 }
 
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
-
 export default function Contact() {
 	const [data, setData] = useState([]);
 	const [secData, setSecData] = useState([]);
@@ -74,6 +72,7 @@ export default function Contact() {
 	const closeModal = () => {
 		setModalData({ show: false, title: "", message: "", isError: false });
 	};
+    const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -93,7 +92,8 @@ export default function Contact() {
 
 	useEffect(() => {
 		fetchData();
-
+		
+        if (!socket.connected) socket.connect();
 		socket.on("footer-updated", fetchData);
 		socket.on("sectionheading-updated", fetchData);
 

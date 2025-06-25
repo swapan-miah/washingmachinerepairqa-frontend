@@ -4,15 +4,14 @@ import Aos from "./Aos";
 import Image from "next/image";
 import InlineSVG from "./InlineSVG";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const ProfessionalServiceSection = () => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -34,7 +33,7 @@ const ProfessionalServiceSection = () => {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("solution-updated", fetchData);
 		socket.on("solution-posted", fetchData);
 		socket.on("solution-deleted", fetchData);

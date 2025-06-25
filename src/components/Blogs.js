@@ -7,9 +7,7 @@ import { MdOutlineDateRange } from "react-icons/md";
 import { TbTag } from "react-icons/tb";
 import { BiRightArrowAlt } from "react-icons/bi";
 import Aos from "./Aos";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 export default function Blogs({ showAll = false }) {
 	const [blogs, setBlogs] = useState([]);
@@ -17,6 +15,8 @@ export default function Blogs({ showAll = false }) {
 	const [secData, setSecData] = useState([]);
 	const [error, setError] = useState(null);
 	const [formattedDates, setFormattedDates] = useState({});
+
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -37,7 +37,7 @@ export default function Blogs({ showAll = false }) {
 
 	useEffect(() => {
 		fetchData();
-
+		if (!socket.connected) socket.connect();
 		socket.on("blog-updated", fetchData);
 		socket.on("blog-posted", fetchData);
 		socket.on("blog-deleted", fetchData);

@@ -5,15 +5,15 @@ import CallNowButton_copy from "./CallNowButton_copy";
 import axios from "axios";
 import { BiRightArrowAlt } from "react-icons/bi";
 import Link from "next/link";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 export default function HeroBanner() {
 	const [current, setCurrent] = useState(0);
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -30,7 +30,7 @@ export default function HeroBanner() {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("hero-updated", fetchData);
 
 		return () => {

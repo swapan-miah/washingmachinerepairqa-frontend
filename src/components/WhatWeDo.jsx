@@ -13,10 +13,7 @@ import {
 } from "react-icons/fa";
 import { FaAnglesRight } from "react-icons/fa6";
 import { BiRightArrowAlt } from "react-icons/bi";
-
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const WhatWeDo = () => {
 	const [data, setData] = useState([]);
@@ -31,6 +28,7 @@ const WhatWeDo = () => {
 		const firstElement = doc.body.firstElementChild;
 		return firstElement?.textContent?.trim() || "";
 	};
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -52,7 +50,7 @@ const WhatWeDo = () => {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("skills-updated", fetchData);
 		socket.on("skills-posted", fetchData);
 		socket.on("skills-deleted", fetchData);

@@ -3,15 +3,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Aos from "./Aos";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const OurTeam = () => {
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-
+    const socket = getSocket();
 	const fetchData = async () => {
 		try {
 			const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/about`);
@@ -25,6 +23,7 @@ const OurTeam = () => {
 
 	useEffect(() => {
 		fetchData();
+		if (!socket.connected) socket.connect();
 		socket.on("about-updated", fetchData);
 		return () => socket.off("about-updated", fetchData);
 	}, [fetchData]);

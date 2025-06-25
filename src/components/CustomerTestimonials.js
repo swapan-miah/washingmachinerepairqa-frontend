@@ -6,9 +6,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import "swiper/css";
 import "swiper/css/navigation";
 import axios from "axios";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
+import { getSocket } from "../../lib/socket";
 
 const CustomerTestimonials = () => {
 	const prevRef = useRef(null);
@@ -18,6 +16,8 @@ const CustomerTestimonials = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
+
+	const socket = getSocket();
 
 	const fetchData = async () => {
 		try {
@@ -39,7 +39,7 @@ const CustomerTestimonials = () => {
 
 	useEffect(() => {
 		fetchData();
-
+        if (!socket.connected) socket.connect();
 		socket.on("feedback-updated", fetchData);
 		socket.on("feedback-posted", fetchData);
 		socket.on("feedback-deleted", fetchData);
