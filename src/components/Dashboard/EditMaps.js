@@ -27,7 +27,7 @@ export default function EditMaps({ data }) {
 		setLoading(true);
 
 		try {
-			await axios.put(`${process.env.BASE_URL}/google-maps/edit/${data._id}`, {
+			await axios.put(`${process.env.NEXT_PUBLIC_BASE_URL}/google-maps/edit/${data._id}`, {
 				mapUrl: formData.mapUrl,
 			});
 

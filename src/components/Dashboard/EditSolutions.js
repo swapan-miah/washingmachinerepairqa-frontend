@@ -55,7 +55,7 @@ export default function EditSolutions({ data }) {
 
 		try {
 			await axios.put(
-				`${process.env.BASE_URL}/our-solutions/edit/${data._id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/our-solutions/edit/${data._id}`,
 				{
 					title: formData.title,
 					description: formData.description,
@@ -81,7 +81,6 @@ export default function EditSolutions({ data }) {
 			<form
 				onSubmit={handleSubmit}
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
-				
 				<div className="grid grid-cols-2 gap-2">
 					{svgFile ? (
 						<div className="relative max-w-44 h-44 border grid place-items-center rounded">
@@ -149,7 +148,9 @@ export default function EditSolutions({ data }) {
 				</div>
 
 				<div className="flex flex-col gap-1">
-					<label htmlFor="description" className="font-medium text-sm text-gray-700">
+					<label
+						htmlFor="description"
+						className="font-medium text-sm text-gray-700">
 						Description <span className="text-red-500">*</span>
 					</label>
 					<textarea
@@ -170,6 +171,5 @@ export default function EditSolutions({ data }) {
 				</button>
 			</form>
 		</div>
-
 	);
 }

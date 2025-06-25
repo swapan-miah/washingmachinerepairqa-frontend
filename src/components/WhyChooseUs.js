@@ -4,7 +4,7 @@ import Image from "next/image";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const WhyChooseUs = () => {
 	const [data, setData] = useState(null);
@@ -15,8 +15,10 @@ const WhyChooseUs = () => {
 	const fetchData = async () => {
 		try {
 			const [secResponse, chooseResponse] = await Promise.all([
-				axios.get(`${process.env.BASE_URL}/section-heading/why-choose-us`),
-				axios.get(`${process.env.BASE_URL}/why-choose`),
+				axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/why-choose-us`,
+				),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/why-choose`),
 			]);
 
 			setSecData(secResponse.data);

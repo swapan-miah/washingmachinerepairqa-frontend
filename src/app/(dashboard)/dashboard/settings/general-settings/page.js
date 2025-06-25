@@ -23,7 +23,9 @@ export default function DisplaySettings() {
 	useEffect(() => {
 		const fetchSettings = async () => {
 			try {
-				const res = await axios.get(`${process.env.BASE_URL}/settings`);
+				const res = await axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/settings`,
+				);
 				setData(res.data);
 				setLoading(false);
 			} catch (error) {

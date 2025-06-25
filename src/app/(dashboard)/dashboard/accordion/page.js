@@ -14,7 +14,9 @@ export default function Page() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/accordion`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/accordion`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to Fetch");
@@ -30,7 +32,9 @@ export default function Page() {
 	const handleDelete = async (id) => {
 		setLoading(true);
 		try {
-			const res = await axios.delete(`${process.env.BASE_URL}/accordion/${id}`);
+			const res = await axios.delete(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/accordion/${id}`,
+			);
 			if (res.data.deletedCount > 0) {
 				await fetchPosts();
 				toast.success("Successfully Deleted!");

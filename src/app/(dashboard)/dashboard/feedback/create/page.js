@@ -28,7 +28,10 @@ export default function page() {
 
 		try {
 			setLoading(true);
-			await axios.post(`${process.env.BASE_URL}/create-feedback`, payload);
+			await axios.post(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/create-feedback`,
+				payload,
+			);
 			toast.success("Submitted Successfully!");
 			setTitle("");
 			setEditorContent("");

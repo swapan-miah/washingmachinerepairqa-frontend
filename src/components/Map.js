@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const Map = () => {
 	const [data, setData] = useState([]);
@@ -12,7 +12,9 @@ const Map = () => {
 
 	const fetchPosts = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/google-maps`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/google-maps`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to fetch posts");

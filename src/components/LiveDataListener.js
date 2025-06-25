@@ -10,7 +10,7 @@ export default function LiveDataListener({ eventName }) {
 
 	useEffect(() => {
 		if (!socket) {
-			socket = io(process.env.BASE_URL);
+			socket = io(process.env.NEXT_PUBLIC_BASE_URL);
 		}
 
 		function handleUpdate() {

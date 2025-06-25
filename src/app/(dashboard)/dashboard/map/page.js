@@ -14,7 +14,7 @@ export default function Page() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-			const res = await axios.get(`${process.env.BASE_URL}/google-maps`);
+			const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/google-maps`);
 			setData(res.data);
 			} catch (err) {
 			setError(err.message || "Failed to fetch Data");

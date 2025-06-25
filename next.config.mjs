@@ -4,7 +4,7 @@ const nextConfig = {
 		unoptimized: true,
 	},
 	env: {
-		BASE_URL: process.env.BASE_URL,
+		NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
 		CLOUD_NAME: process.env.CLOUD_NAME,
 		CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
 		CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,

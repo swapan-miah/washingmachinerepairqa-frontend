@@ -83,7 +83,7 @@ export default function BlogDetails({ params }) {
 		const fetchData = async () => {
 			try {
 				const { data: allBlogs } = await axios.get(
-					`${process.env.BASE_URL}/our-blogs`,
+					`${process.env.NEXT_PUBLIC_BASE_URL}/our-blogs`,
 				);
 
 				const currentBlog = allBlogs.find((item) => item.slug === id);

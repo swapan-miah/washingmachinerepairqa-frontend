@@ -122,11 +122,13 @@ export default function EditWorks({ data }) {
 		}
 
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/services-skills`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/services-skills`,
+			);
 			const allServices = res.data;
 
 			const slugUsed = allServices.some(
-				(service) => service.slug === slug && service._id !== data._id
+				(service) => service.slug === slug && service._id !== data._id,
 			);
 
 			if (slugUsed) {
@@ -137,7 +139,7 @@ export default function EditWorks({ data }) {
 			}
 
 			await axios.put(
-				`${process.env.BASE_URL}/services-skills/edit/${data._id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/services-skills/edit/${data._id}`,
 				{
 					metaTitle,
 					metaDescription,
@@ -149,7 +151,7 @@ export default function EditWorks({ data }) {
 					description,
 					svgIcon: uploadedSvgUrl,
 					image: uploadedImageUrl,
-				}
+				},
 			);
 
 			router.push("/dashboard/skills");
@@ -171,23 +173,47 @@ export default function EditWorks({ data }) {
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
 				<div className="grid grid-cols-2 gap-2">
 					{imageRemoved ? (
-						<UploadBlock label="Photo" onChange={handleImageChange} accept="image/*" />
+						<UploadBlock
+							label="Photo"
+							onChange={handleImageChange}
+							accept="image/*"
+						/>
 					) : image ? (
 						<PreviewBlock file={image} onRemove={handleRemoveImage} />
 					) : data.image ? (
-						<PreviewBlock file={data.image} onRemove={handleRemoveImage} existing />
+						<PreviewBlock
+							file={data.image}
+							onRemove={handleRemoveImage}
+							existing
+						/>
 					) : (
-						<UploadBlock label="Photo" onChange={handleImageChange} accept="image/*" />
+						<UploadBlock
+							label="Photo"
+							onChange={handleImageChange}
+							accept="image/*"
+						/>
 					)}
 
 					{svgRemoved ? (
-						<UploadBlock label="Icon" onChange={handleSvgChange} accept=".svg" />
+						<UploadBlock
+							label="Icon"
+							onChange={handleSvgChange}
+							accept=".svg"
+						/>
 					) : svgFile ? (
 						<PreviewBlock file={svgFile} onRemove={handleRemoveSvg} />
 					) : data.svgIcon ? (
-						<PreviewBlock file={data.svgIcon} onRemove={handleRemoveSvg} existing />
+						<PreviewBlock
+							file={data.svgIcon}
+							onRemove={handleRemoveSvg}
+							existing
+						/>
 					) : (
-						<UploadBlock label="Icon" onChange={handleSvgChange} accept=".svg" />
+						<UploadBlock
+							label="Icon"
+							onChange={handleSvgChange}
+							accept=".svg"
+						/>
 					)}
 				</div>
 
@@ -222,10 +248,14 @@ export default function EditWorks({ data }) {
 				))}
 
 				<div className="flex flex-col gap-2">
-					<label className="text-sm font-medium text-gray-700">Robots Meta</label>
+					<label className="text-sm font-medium text-gray-700">
+						Robots Meta
+					</label>
 					<div className="flex flex-col sm:flex-row gap-3">
 						{["index", "noindex"].map((option) => (
-							<label key={option} className="flex items-center gap-3 p-3 border border-gray-300 rounded cursor-pointer">
+							<label
+								key={option}
+								className="flex items-center gap-3 p-3 border border-gray-300 rounded cursor-pointer">
 								<input
 									type="radio"
 									name="robotMeta"
@@ -279,11 +309,15 @@ export default function EditWorks({ data }) {
 				</div>
 
 				<div className="flex flex-col gap-1">
-					<label className="text-sm font-medium text-gray-700">Description</label>
+					<label className="text-sm font-medium text-gray-700">
+						Description
+					</label>
 					<TextEditor value={editorContent} onChange={setEditorContent} />
 				</div>
 
-				<button type="submit" className="bg-[#0d9488] text-white py-2 px-5 rounded font-medium">
+				<button
+					type="submit"
+					className="bg-[#0d9488] text-white py-2 px-5 rounded font-medium">
 					Update
 				</button>
 			</form>
@@ -295,7 +329,13 @@ const PreviewBlock = ({ file, onRemove, existing = false }) => {
 	const src = existing ? file : URL.createObjectURL(file);
 	return (
 		<div className="relative w-full h-48">
-			<Image src={src} width={100} height={100} alt="Preview" className="w-full h-full object-contain rounded border" />
+			<Image
+				src={src}
+				width={100}
+				height={100}
+				alt="Preview"
+				className="w-full h-full object-contain rounded border"
+			/>
 			<button
 				type="button"
 				onClick={onRemove}

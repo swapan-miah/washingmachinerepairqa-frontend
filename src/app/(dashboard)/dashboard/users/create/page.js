@@ -43,7 +43,7 @@ const Register = () => {
 			const userCredential = await createUserWithEmailAndPassword(
 				secondaryAuth,
 				email,
-				password
+				password,
 			);
 
 			await updateProfile(userCredential.user, { displayName: name });
@@ -51,7 +51,7 @@ const Register = () => {
 			const { uid } = userCredential.user;
 			const createdAt = new Date().toISOString();
 
-			await axios.post(`${process.env.BASE_URL}/create-user`, {
+			await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-user`, {
 				name,
 				email,
 				uid,

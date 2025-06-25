@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 export default function Accordion() {
 	const [data, setData] = useState([]);
@@ -15,8 +15,8 @@ export default function Accordion() {
 	const fetchData = async () => {
 		try {
 			const [secResponse, accordionResponse] = await Promise.all([
-				axios.get(`${process.env.BASE_URL}/section-heading/faq`),
-				axios.get(`${process.env.BASE_URL}/accordion`),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/faq`),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/accordion`),
 			]);
 
 			setSecData(secResponse.data);

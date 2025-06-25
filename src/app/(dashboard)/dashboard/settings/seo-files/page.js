@@ -18,7 +18,9 @@ export default function Page() {
 
 	const fetchSeoFile = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/seo-files`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/seo-files`,
+			);
 			setSeoFile(res.data);
 		} catch (err) {
 			toast.error("Failed to fetch SEO file");
@@ -33,7 +35,7 @@ export default function Page() {
 
 	const handleDelete = async (id) => {
 		try {
-			await axios.delete(`${process.env.BASE_URL}/seo-files/${id}`);
+			await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/seo-files/${id}`);
 			setSeoFile(null);
 			toast.success("Successfully Deleted!");
 		} catch (err) {

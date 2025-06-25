@@ -83,7 +83,9 @@ export default function EditBlog({ data }) {
 		}
 
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/our-blogs`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/our-blogs`,
+			);
 			const allBlogs = res.data;
 
 			const slugUsed = allBlogs.some(
@@ -105,12 +107,15 @@ export default function EditBlog({ data }) {
 				uploadedImageUrl = "";
 			}
 
-			await axios.put(`${process.env.BASE_URL}/our-blogs/edit/${data._id}`, {
-				...formData,
-				schema: cleanSchema,
-				description: editorContent,
-				image: uploadedImageUrl,
-			});
+			await axios.put(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/our-blogs/edit/${data._id}`,
+				{
+					...formData,
+					schema: cleanSchema,
+					description: editorContent,
+					image: uploadedImageUrl,
+				},
+			);
 
 			toast.success("Updated Successfully!");
 			router.push("/dashboard/blogs");

@@ -69,7 +69,7 @@ export default function EditFooter({ data }) {
 
 		try {
 			await axios.put(
-				`${process.env.BASE_URL}/footer-content/edit/${data._id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/footer-content/edit/${data._id}`,
 				payload,
 			);
 			router.push("/dashboard/footer");

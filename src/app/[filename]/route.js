@@ -4,7 +4,7 @@ import axios from "axios";
 async function getFileUrl(filename) {
 	if (!filename.endsWith(".html")) return null;
 
-	const res = await axios.get(`${process.env.BASE_URL}/seo-files`, {
+	const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/seo-files`, {
 		headers: { "Cache-Control": "no-store" },
 	});
 

@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
 	const { id } = params;
 	try {
 		const { data: services } = await axios.get(
-			`${process.env.BASE_URL}/our-blogs`,
+			`${process.env.NEXT_PUBLIC_BASE_URL}/our-blogs`,
 		);
 		const currentService = services.find((item) => item.slug === id);
 		if (!currentService) {

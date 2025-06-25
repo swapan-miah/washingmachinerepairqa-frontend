@@ -12,10 +12,11 @@ export default function page() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/feedback`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/feedback`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to Fetch Data");
@@ -31,7 +32,9 @@ export default function page() {
 	const handleDelete = async (id) => {
 		setLoading(true);
 		try {
-			const res = await axios.delete(`${process.env.BASE_URL}/feedback/${id}`);
+			const res = await axios.delete(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/feedback/${id}`,
+			);
 			if (res.data.deletedCount > 0) {
 				await fetchPosts();
 				toast.success("Successfully Deleted!");

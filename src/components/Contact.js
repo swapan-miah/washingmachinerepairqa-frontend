@@ -51,7 +51,7 @@ function Modal({ show, onClose, title, message, isError }) {
 	);
 }
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 export default function Contact() {
 	const [data, setData] = useState([]);
@@ -78,8 +78,10 @@ export default function Contact() {
 	const fetchData = async () => {
 		try {
 			const [secRes, contactRes] = await Promise.all([
-				axios.get(`${process.env.BASE_URL}/section-heading/contact`),
-				axios.get(`${process.env.BASE_URL}/footer-content`),
+				axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/contact`,
+				),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/footer-content`),
 			]);
 			setData(contactRes.data);
 			setSecData(secRes.data);

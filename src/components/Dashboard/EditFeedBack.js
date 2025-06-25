@@ -29,7 +29,7 @@ export default function EditFeedBack({ data }) {
 		try {
 			setLoading(true);
 			await axios.put(
-				`${process.env.BASE_URL}/feedback/edit/${data._id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/feedback/edit/${data._id}`,
 				payload,
 			);
 			router.push("/dashboard/feedback");
@@ -53,9 +53,7 @@ export default function EditFeedBack({ data }) {
 				onSubmit={handleSubmit}
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
 				<div className="flex flex-col gap-1">
-					<label
-						htmlFor="title"
-						className="font-medium text-sm text-gray-700">
+					<label htmlFor="title" className="font-medium text-sm text-gray-700">
 						Title <span className="text-red-500">*</span>
 					</label>
 					<input

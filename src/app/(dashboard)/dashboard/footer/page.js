@@ -15,7 +15,9 @@ export default function Page() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const res = await axios.get(`${process.env.BASE_URL}/footer-content`);
+				const res = await axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/footer-content`,
+				);
 				setData(res.data);
 			} catch (err) {
 				setError(err.message || "Failed to fetch Data");
@@ -114,7 +116,9 @@ export default function Page() {
 													<div className="mt-4 space-y-4">
 														<div className="bg-gray-50 p-3 rounded-lg border">
 															<h4 className="font-semibold">Title</h4>
-															<p className="text-gray-600 mt-2">{service.title}</p>
+															<p className="text-gray-600 mt-2">
+																{service.title}
+															</p>
 														</div>
 														<div className="bg-gray-50 p-3 rounded-lg border">
 															<h4 className="font-semibold">Link</h4>
@@ -122,8 +126,7 @@ export default function Page() {
 																href={service.link}
 																target="_blank"
 																rel="noopener noreferrer"
-																className="text-blue-500 underline break-all block mt-2"
-															>
+																className="text-blue-500 underline break-all block mt-2">
 																{service.link}
 															</a>
 														</div>
@@ -177,7 +180,7 @@ export default function Page() {
 																	subValue
 																)}
 															</li>
-														)
+														),
 													)}
 												</ul>
 											) : (
@@ -187,8 +190,8 @@ export default function Page() {
 									</div>
 								</div>
 							)
-						) : null
-					)
+						) : null,
+					),
 				)}
 			</div>
 		</div>

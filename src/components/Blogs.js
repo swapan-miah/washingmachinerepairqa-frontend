@@ -7,11 +7,9 @@ import { MdOutlineDateRange } from "react-icons/md";
 import { TbTag } from "react-icons/tb";
 import { BiRightArrowAlt } from "react-icons/bi";
 import Aos from "./Aos";
-import { FaHome } from "react-icons/fa";
-import { FaAngleRight } from "react-icons/fa6";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 export default function Blogs({ showAll = false }) {
 	const [blogs, setBlogs] = useState([]);
@@ -23,8 +21,8 @@ export default function Blogs({ showAll = false }) {
 	const fetchData = async () => {
 		try {
 			const [secResponse, blogsResponse] = await Promise.all([
-				axios.get(`${process.env.BASE_URL}/section-heading/blogs`),
-				axios.get(`${process.env.BASE_URL}/our-blogs`),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/blogs`),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/our-blogs`),
 			]);
 
 			setSecData(secResponse.data);

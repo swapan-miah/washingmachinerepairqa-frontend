@@ -15,7 +15,7 @@ export default function Users() {
 
 	const fetchUsers = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/users`);
+			const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/users`);
 			setData(res.data);
 		} catch (error) {
 			toast.error("Failed to load users");
@@ -42,7 +42,7 @@ export default function Users() {
 		if (!confirm("Are you sure you want to delete this user?")) return;
 		try {
 			setDeletingUid(uid);
-			await axios.delete(`${process.env.BASE_URL}/users/${uid}`);
+			await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${uid}`);
 			toast.success("Deleted successfully");
 			fetchUsers();
 		} catch (error) {

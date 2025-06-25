@@ -15,7 +15,9 @@ export default function page() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/hero-slider`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/hero-slider`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to fetch Data");
@@ -31,7 +33,9 @@ export default function page() {
 	const handleDelete = async (id) => {
 		setLoading(true);
 		try {
-			const res = await axios.delete(`${process.env.BASE_URL}/delate-slider/${id}`);
+			const res = await axios.delete(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/delate-slider/${id}`,
+			);
 			if (res.data.deletedCount > 0) {
 				await fetchData();
 				toast.success("Successfully Deleted!");
@@ -110,7 +114,9 @@ export default function page() {
 									</div>
 								</td>
 								<td className="px-4 py-3 text-sm w-[100px] max-w-[200px]">
-									<span className="line-clamp-1 break-all">{sData?.number}</span>
+									<span className="line-clamp-1 break-all">
+										{sData?.number}
+									</span>
 								</td>
 								<td className="px-4 py-3 text-sm w-[250px] max-w-[350px]">
 									<span className="line-clamp-2 break-all">{sData?.title}</span>

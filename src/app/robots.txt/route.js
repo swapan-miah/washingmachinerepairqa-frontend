@@ -4,9 +4,12 @@ import axios from "axios";
 
 async function getRobotsTxtUrl() {
 	try {
-		const res = await axios.get(`${process.env.BASE_URL}/seo-files`, {
-			headers: { "Cache-Control": "no-store" },
-		});
+		const res = await axios.get(
+			`${process.env.NEXT_PUBLIC_BASE_URL}/seo-files`,
+			{
+				headers: { "Cache-Control": "no-store" },
+			},
+		);
 		return res.data.txtUrl;
 	} catch (err) {
 		console.error("Failed to fetch robots.txt URL:", err);

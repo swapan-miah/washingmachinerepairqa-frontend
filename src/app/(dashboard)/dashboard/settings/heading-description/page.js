@@ -15,7 +15,9 @@ export default function Page() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/section-heading`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to fetch Data");
@@ -36,7 +38,7 @@ export default function Page() {
 		setLoading(true);
 		try {
 			const res = await axios.delete(
-				`${process.env.BASE_URL}/section-heading/${id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/${id}`,
 			);
 			if (res.data.deletedCount > 0) {
 				await fetchData();

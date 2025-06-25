@@ -41,12 +41,12 @@ export default function EditSEOData({ pageName, data }) {
 			description,
 			keywords,
 			robots,
-			schema : cleanSchema,
+			schema: cleanSchema,
 		};
 
 		try {
 			await axios.put(
-				`${process.env.BASE_URL}/seo/edit/${pageName}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/seo/edit/${pageName}`,
 				updateData,
 			);
 			toast.success("Updated Successfully!");

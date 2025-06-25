@@ -43,7 +43,7 @@ export default function Page() {
 		const { title, description, number, link } = formData;
 
 		try {
-			await axios.post(`${process.env.BASE_URL}/post-slider`, {
+			await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/post-slider`, {
 				title,
 				description,
 				number,

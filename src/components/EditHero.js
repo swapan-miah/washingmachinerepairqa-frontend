@@ -11,9 +11,8 @@ import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 export default function EditHero({ data }) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
-    const [image, setImage] = useState(null);
+	const [image, setImage] = useState(null);
 	const [imageRemoved, setImageRemoved] = useState(false);
-
 
 	const [formData, setFormData] = useState({
 		title: data.title || "",
@@ -26,7 +25,7 @@ export default function EditHero({ data }) {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-    const handleImageChange = (e) => {
+	const handleImageChange = (e) => {
 		const file = e.target.files[0];
 		if (file) {
 			setImage(file);
@@ -52,13 +51,16 @@ export default function EditHero({ data }) {
 				uploadedImageUrl = "";
 			}
 
-			await axios.put(`${process.env.BASE_URL}/hero-slider/edit/${data._id}`, {
-				title: formData.title,
-				description: formData.description,
-				number: formData.number,
-				link: formData.link,
-				imgUrl: uploadedImageUrl,
-			});
+			await axios.put(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/hero-slider/edit/${data._id}`,
+				{
+					title: formData.title,
+					description: formData.description,
+					number: formData.number,
+					link: formData.link,
+					imgUrl: uploadedImageUrl,
+				},
+			);
 
 			setFormData({ title: "", number: "", description: "" });
 			router.push("/dashboard/hero");
@@ -81,7 +83,6 @@ export default function EditHero({ data }) {
 			<form
 				onSubmit={handleSubmit}
 				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
-
 				<div className="grid grid-cols-2 gap-2">
 					{imageRemoved ? (
 						<UploadPlaceholder onChange={handleImageChange} />
@@ -111,7 +112,7 @@ export default function EditHero({ data }) {
 						required
 					/>
 				</div>
-                <div className="flex flex-col gap-1">
+				<div className="flex flex-col gap-1">
 					<label
 						htmlFor="description"
 						className="font-medium text-sm text-gray-700">
@@ -167,7 +168,6 @@ export default function EditHero({ data }) {
 		</div>
 	);
 }
-
 
 function PreviewImage({ image, onRemove }) {
 	return (

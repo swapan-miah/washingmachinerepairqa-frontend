@@ -62,12 +62,15 @@ export default function EditAbout({ data }) {
 
 			const finalImageList = [...oldImages, ...uploadedUrls];
 
-			await axios.put(`${process.env.BASE_URL}/about/edit/${data._id}`, {
-				...formData,
-				images: finalImageList,
-			});
+			await axios.put(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/about/edit/${data._id}`,
+				{
+					...formData,
+					images: finalImageList,
+				},
+			);
 			toast.success("Updated Successfully!");
-            setFormData({
+			setFormData({
 				sectionHeading: "",
 				sectionSubHeading: "",
 				sectionDescription: "",
@@ -97,14 +100,21 @@ export default function EditAbout({ data }) {
 		<div className="p-5">
 			<form
 				onSubmit={handleSubmit}
-				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded"
-			>
+				className="p-5 bg-white flex flex-col gap-5 border border-gray-200 rounded">
 				{[
 					{ name: "sectionHeading", label: "Section Heading" },
 					{ name: "sectionSubHeading", label: "Section Subheading" },
-					{ name: "sectionDescription", label: "Section Description", isTextarea: true },
+					{
+						name: "sectionDescription",
+						label: "Section Description",
+						isTextarea: true,
+					},
 					{ name: "cardHeadline", label: "Card Headline" },
-					{ name: "cardDescription", label: "Card Description", isTextarea: true },
+					{
+						name: "cardDescription",
+						label: "Card Description",
+						isTextarea: true,
+					},
 					{ name: "ceoName", label: "CEO Name" },
 					{ name: "role", label: "Role" },
 					{ name: "ceoAbout", label: "CEO About", isTextarea: true },
@@ -156,8 +166,7 @@ export default function EditAbout({ data }) {
 								<button
 									type="button"
 									onClick={() => handleRemoveOldImage(index)}
-									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100"
-								>
+									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100">
 									<MdClose size={16} className="text-red-500" />
 								</button>
 							</div>
@@ -175,8 +184,7 @@ export default function EditAbout({ data }) {
 								<button
 									type="button"
 									onClick={() => handleRemoveNewImage(index)}
-									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100"
-								>
+									className="absolute top-1 right-1 bg-white border border-red-100 rounded-full p-1 hover:bg-red-100">
 									<MdClose size={16} className="text-red-500" />
 								</button>
 							</div>
@@ -199,8 +207,7 @@ export default function EditAbout({ data }) {
 
 				<button
 					type="submit"
-					className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded"
-				>
+					className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded">
 					Update
 				</button>
 			</form>

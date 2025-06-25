@@ -13,12 +13,12 @@ import {
 	MdEmail,
 	PiPhoneCallFill,
 	IoLocationSharp,
-	FaSquareXTwitter
+	FaSquareXTwitter,
 } from "./Icons/Icons";
 
 const FooterBottom = dynamic(() => import("./FooterBottom"), { ssr: false });
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const Footer = ({ data }) => {
 	const [footerData, setFooterData] = useState([]);
@@ -26,7 +26,9 @@ const Footer = ({ data }) => {
 
 	const fetchData = useCallback(async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/footer-content`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/footer-content`,
+			);
 			setFooterData(res.data);
 		} catch (err) {
 			// console.error("Footer fetch failed:", err);
@@ -84,18 +86,36 @@ const Footer = ({ data }) => {
 							<p className="text-gray-400">{sData.description}</p>
 							<div className="flex mt-4 space-x-4">
 								{sData.facebook && (
-									<a href={`https://${sData.facebook}`} target="_blank" rel="noopener noreferrer">
-										<FaFacebookSquare size={28} className="text-gray-400 hover:text-white" />
+									<a
+										href={`https://${sData.facebook}`}
+										target="_blank"
+										rel="noopener noreferrer">
+										<FaFacebookSquare
+											size={28}
+											className="text-gray-400 hover:text-white"
+										/>
 									</a>
 								)}
 								{sData.instagram && (
-									<a href={`https://${sData.instagram}`} target="_blank" rel="noopener noreferrer">
-										<FaInstagramSquare size={28} className="text-gray-400 hover:text-white" />
+									<a
+										href={`https://${sData.instagram}`}
+										target="_blank"
+										rel="noopener noreferrer">
+										<FaInstagramSquare
+											size={28}
+											className="text-gray-400 hover:text-white"
+										/>
 									</a>
 								)}
 								{sData.twitter && (
-									<a href={`https://${sData.twitter}`} target="_blank" rel="noopener noreferrer">
-										<FaSquareXTwitter size={28} className="text-gray-400 hover:text-white" />
+									<a
+										href={`https://${sData.twitter}`}
+										target="_blank"
+										rel="noopener noreferrer">
+										<FaSquareXTwitter
+											size={28}
+											className="text-gray-400 hover:text-white"
+										/>
 									</a>
 								)}
 								{sData.whatsapp && (
@@ -103,12 +123,21 @@ const Footer = ({ data }) => {
 										href={`https://wa.me/${sData.whatsapp.replace(/\D/g, "")}`}
 										target="_blank"
 										rel="noopener noreferrer">
-										<FaWhatsappSquare size={28} className="text-gray-400 hover:text-white" />
+										<FaWhatsappSquare
+											size={28}
+											className="text-gray-400 hover:text-white"
+										/>
 									</a>
 								)}
 								{sData.youtube && (
-									<a href={`https://${sData.youtube}`} target="_blank" rel="noopener noreferrer">
-										<FaYoutubeSquare size={28} className="text-gray-400 hover:text-white" />
+									<a
+										href={`https://${sData.youtube}`}
+										target="_blank"
+										rel="noopener noreferrer">
+										<FaYoutubeSquare
+											size={28}
+											className="text-gray-400 hover:text-white"
+										/>
 									</a>
 								)}
 							</div>
@@ -145,11 +174,15 @@ const Footer = ({ data }) => {
 						<div>
 							<h3 className="text-xl font-bold mb-4">Our Services</h3>
 							<ul className="text-gray-400 list-disc list-inside space-y-2">
-								{sData.services?.slice().reverse().slice(0, 6).map((service, idx) => (
-									<li key={idx}>
-										<a href={service.link}>{service.title}</a>
-									</li>
-								))}
+								{sData.services
+									?.slice()
+									.reverse()
+									.slice(0, 6)
+									.map((service, idx) => (
+										<li key={idx}>
+											<a href={service.link}>{service.title}</a>
+										</li>
+									))}
 							</ul>
 						</div>
 					</div>

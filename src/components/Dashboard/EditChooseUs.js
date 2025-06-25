@@ -95,10 +95,13 @@ export default function EditWhyChooseUs({ data }) {
 				}),
 			);
 
-			await axios.put(`${process.env.BASE_URL}/why-choose/edit/${data._id}`, {
-				cover: uploadedCover,
-				expertise: updatedExpertise,
-			});
+			await axios.put(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/why-choose/edit/${data._id}`,
+				{
+					cover: uploadedCover,
+					expertise: updatedExpertise,
+				},
+			);
 
 			setFormData({
 				cover: "",

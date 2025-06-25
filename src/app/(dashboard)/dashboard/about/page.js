@@ -15,7 +15,7 @@ export default function Page() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const res = await axios.get(`${process.env.BASE_URL}/about`);
+				const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/about`);
 				setData(res.data);
 			} catch (err) {
 				setError(err.message || "Failed to Fetch");

@@ -14,7 +14,9 @@ export default function Page() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/why-choose`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/why-choose`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to Fetch Data");

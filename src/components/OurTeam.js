@@ -5,8 +5,7 @@ import Aos from "./Aos";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
-
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const OurTeam = () => {
 	const [data, setData] = useState(null);
@@ -15,7 +14,7 @@ const OurTeam = () => {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/about`);
+			const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/about`);
 			setData(res.data);
 		} catch (error) {
 			setError(error.message || "Failed to fetch data");

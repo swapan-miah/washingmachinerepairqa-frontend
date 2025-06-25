@@ -38,7 +38,7 @@ export default function Page() {
 		const description = form.get("description");
 
 		try {
-			await axios.post(`${process.env.BASE_URL}/post-service`, {
+			await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/post-service`, {
 				title,
 				number,
 				description,

@@ -7,7 +7,7 @@ import { BiRightArrowAlt } from "react-icons/bi";
 import Link from "next/link";
 import { io } from "socket.io-client";
 
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 export default function HeroBanner() {
 	const [current, setCurrent] = useState(0);
@@ -17,7 +17,9 @@ export default function HeroBanner() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/hero-slider`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/hero-slider`,
+			);
 			setData(res.data);
 		} catch (err) {
 			setError(err.message || "Failed to fetch Data");

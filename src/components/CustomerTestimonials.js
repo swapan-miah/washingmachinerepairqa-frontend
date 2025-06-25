@@ -8,8 +8,7 @@ import "swiper/css/navigation";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const CustomerTestimonials = () => {
 	const prevRef = useRef(null);
@@ -20,11 +19,13 @@ const CustomerTestimonials = () => {
 	const [error, setError] = useState(null);
 	const [secData, setSecData] = useState([]);
 
-		const fetchData = async () => {
+	const fetchData = async () => {
 		try {
 			const [secResponse, feedbackResponse] = await Promise.all([
-			axios.get(`${process.env.BASE_URL}/section-heading/feedback`),
-			axios.get(`${process.env.BASE_URL}/feedback`),
+				axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/feedback`,
+				),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/feedback`),
 			]);
 
 			setSecData(secResponse.data);
@@ -34,7 +35,7 @@ const CustomerTestimonials = () => {
 		} finally {
 			setLoading(false);
 		}
-		};
+	};
 
 	useEffect(() => {
 		fetchData();

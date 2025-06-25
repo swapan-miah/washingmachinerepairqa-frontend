@@ -10,7 +10,7 @@ export default function page() {
 	const [question, setQuestion] = useState("");
 	const [editorContent, setEditorContent] = useState("");
 	const [loading, setLoading] = useState(false);
-    const router = useRouter();
+	const router = useRouter();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -28,14 +28,17 @@ export default function page() {
 
 		try {
 			setLoading(true);
-			await axios.post(`${process.env.BASE_URL}/create-accordion`, payload);
+			await axios.post(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/create-accordion`,
+				payload,
+			);
 			toast.success("Submitted Successfully!");
 			setQuestion("");
 			setEditorContent("");
 		} catch (error) {
 			toast.error("Error posting Data");
 		} finally {
-            router.push("/dashboard/accordion");
+			router.push("/dashboard/accordion");
 			setLoading(false);
 		}
 	};

@@ -28,7 +28,7 @@ export default function EditAccordion({ data }) {
 		try {
 			setLoading(true);
 			await axios.put(
-				`${process.env.BASE_URL}/accordion/edit/${data._id}`,
+				`${process.env.NEXT_PUBLIC_BASE_URL}/accordion/edit/${data._id}`,
 				payload,
 			);
 			router.push("/dashboard/accordion");

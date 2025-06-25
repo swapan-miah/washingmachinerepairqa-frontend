@@ -30,7 +30,7 @@ export default function Page() {
 				uploadFileToCloudinary(htmlFile),
 			]);
 
-			await axios.post(`${process.env.BASE_URL}/create-seo-files`, {
+			await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-seo-files`, {
 				xmlUrl,
 				txtUrl,
 				htmlUrl,

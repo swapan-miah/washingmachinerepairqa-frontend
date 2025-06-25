@@ -16,7 +16,9 @@ export default function Page() {
 
 	const fetchData = async () => {
 		try {
-			const res = await axios.get(`${process.env.BASE_URL}/seo/home`);
+			const res = await axios.get(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/seo/home`,
+			);
 			setData(res.data || null);
 		} catch (err) {
 			setError(err.message || "Failed to Fetch");
@@ -41,7 +43,9 @@ export default function Page() {
 					<h2 className="relative text-lg font-semibold text-gray-800 mb-2 pb-2 after:absolute after:bottom-0 after:left-0 after:w-20 after:h-[2px] after:bg-black before:absolute before:bottom-1 before:left-0 before:w-28 before:h-[2px] before:bg-[#0d9488]">
 						Home SEO
 					</h2>
-					<Link href={`/dashboard/seo/home/edit/${data._id}`} onClick={() => setLoading(true)}>
+					<Link
+						href={`/dashboard/seo/home/edit/${data._id}`}
+						onClick={() => setLoading(true)}>
 						<button className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded flex items-center justify-center gap-1">
 							<BiSolidEdit />
 							Edit
@@ -61,7 +65,9 @@ export default function Page() {
 				<h2 className="relative text-lg font-semibold text-gray-800 mb-2 pb-2 after:absolute after:bottom-0 after:left-0 after:w-20 after:h-[2px] after:bg-black before:absolute before:bottom-1 before:left-0 before:w-28 before:h-[2px] before:bg-[#0d9488]">
 					Home SEO
 				</h2>
-				<Link href={`/dashboard/seo/home/edit/${data._id}`} onClick={() => setLoading(true)}>
+				<Link
+					href={`/dashboard/seo/home/edit/${data._id}`}
+					onClick={() => setLoading(true)}>
 					<button className="bg-[#0d9488] py-2 px-5 text-white font-medium rounded flex items-center justify-center gap-1">
 						<BiSolidEdit />
 						Edit

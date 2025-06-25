@@ -6,8 +6,7 @@ import InlineSVG from "./InlineSVG";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 const ProfessionalServiceSection = () => {
 	const [data, setData] = useState([]);
@@ -18,8 +17,10 @@ const ProfessionalServiceSection = () => {
 	const fetchData = async () => {
 		try {
 			const [secResponse, solutionResponse] = await Promise.all([
-				axios.get(`${process.env.BASE_URL}/section-heading/expert-solutions`),
-				axios.get(`${process.env.BASE_URL}/our-solutions`),
+				axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/expert-solutions`,
+				),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/our-solutions`),
 			]);
 
 			setSecData(secResponse.data);

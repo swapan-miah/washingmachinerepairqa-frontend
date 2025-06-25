@@ -4,8 +4,7 @@ import { PiPhoneCallFill } from "react-icons/pi";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-
-const socket = io(process.env.BASE_URL, { autoConnect: true });
+const socket = io(process.env.NEXT_PUBLIC_BASE_URL, { autoConnect: true });
 
 export default function WashingMachineRepair() {
 	const [data, setData] = useState([]);
@@ -14,20 +13,22 @@ export default function WashingMachineRepair() {
 	const [secData, setSecData] = useState([]);
 
 	const fetchData = async () => {
-			try {
-				const [secResponse, serviceResponse] = await Promise.all([
-					axios.get(`${process.env.BASE_URL}/section-heading/best-service`),
-					axios.get(`${process.env.BASE_URL}/our-services`),
-				]);
+		try {
+			const [secResponse, serviceResponse] = await Promise.all([
+				axios.get(
+					`${process.env.NEXT_PUBLIC_BASE_URL}/section-heading/best-service`,
+				),
+				axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/our-services`),
+			]);
 
-				setSecData(secResponse.data);
-				setData(serviceResponse.data);
-			} catch (err) {
-				setError(err.message || "Failed to fetch data");
-			} finally {
-				setLoading(false);
-			}
-		};
+			setSecData(secResponse.data);
+			setData(serviceResponse.data);
+		} catch (err) {
+			setError(err.message || "Failed to fetch data");
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
 		fetchData();
